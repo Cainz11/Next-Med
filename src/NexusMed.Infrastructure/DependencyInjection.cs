@@ -23,9 +23,21 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? "Data Source=nexusmed.db";
-        var provider = configuration["DatabaseProvider"] ?? InferProvider(connectionString);
+        var rawConnection = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = string.IsNullOrWhiteSpace(rawConnection)
+            ? "Data Source=nexusmed.db"
+            : rawConnection;
+        var providerConfig = configuration["DatabaseProvider"];
+        var provider = string.IsNullOrWhiteSpace(providerConfig)
+            ? InferProvider(connectionString)
+            : providerConfig;
+
+        // LocalDB só existe no Windows (ex.: Railway/Render usam Linux)
+        if (connectionString.Contains("(localdb)", StringComparison.OrdinalIgnoreCase) && !OperatingSystem.IsWindows())
+        {
+            connectionString = "Data Source=nexusmed.db";
+            provider = "Sqlite";
+        }
         services.AddDbContext<AppDbContext>(options =>
         {
             switch (provider)
