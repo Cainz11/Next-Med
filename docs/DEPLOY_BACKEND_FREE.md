@@ -41,17 +41,17 @@ Railway dá crédito gratuito por mês. Dá para rodar a API + PostgreSQL tranqu
    - **RAILWAY_DOCKERFILE_PATH** = `Dockerfile.api`
 5. Não defina Build Command nem Start Command (o Dockerfile cuida disso).
 
-4. **Variables** (variáveis de ambiente) – adicione:
+4. **Variables** (variáveis de ambiente) – **obrigatório** para usar PostgreSQL (senão a API usa SQLite ou pode falhar com LocalDB no Linux):
 
    | Nome | Valor |
    |------|--------|
    | `DatabaseProvider` | `Npgsql` |
-   | `ConnectionStrings__DefaultConnection` | Cole o valor de **DATABASE_URL** do PostgreSQL |
+   | `ConnectionStrings__DefaultConnection` | Cole o valor de **DATABASE_URL** do PostgreSQL (ex.: `postgresql://postgres:xxx@xxx.railway.internal:5432/railway`) |
    | `Jwt__Secret` | Uma chave longa e aleatória (ex.: 32+ caracteres) |
    | `Jwt__Issuer` | `NexusMed` |
    | `Jwt__Audience` | `NexusMed` |
 
-   Para pegar a **DATABASE_URL**: no serviço PostgreSQL → **Variables** → copie `DATABASE_URL`.
+   Para pegar a **DATABASE_URL**: no serviço **PostgreSQL** → aba **Variables** ou **Connect** → copie `DATABASE_URL` e cole em `ConnectionStrings__DefaultConnection` do serviço da **API**. No Railway você pode referenciar a variável do outro serviço: em **Variables** da API, **Add Variable** → **Add Reference** → escolha o serviço PostgreSQL → variável `DATABASE_URL` (ele preenche o valor automaticamente).
 
 5. **Settings** do serviço da API:
    - **Generate Domain** (ou **Settings** → **Networking** → **Generate Domain**) para ter uma URL pública, ex.: `https://next-med-api.up.railway.app`.
@@ -169,6 +169,31 @@ Isso acontece quando o Railway **não** usa o `Dockerfile.api` e tenta buildar s
 3. Se ainda assim usar Nixpacks/Railpack, nas **Variables** do serviço adicione:
    - **RAILWAY_DOCKERFILE_PATH** = `Dockerfile.api`
 4. Faça um novo deploy (Redeploy ou push no GitHub).
+
+---
+
+## Erro: "LocalDB is not supported on this platform"
+
+Isso acontece quando a API está rodando no **Linux** (Railway, Render) mas a configuração ainda aponta para **SQL Server LocalDB** (que só existe no Windows).
+
+**Solução:**
+
+1. **Defina as variáveis de ambiente** no serviço da API (Railway/Render):
+   - **DatabaseProvider** = `Npgsql`
+   - **ConnectionStrings__DefaultConnection** = URL do PostgreSQL (a mesma **DATABASE_URL** do banco que você criou)
+
+2. No **Railway**: no serviço da API → **Variables** → **Add Reference** → selecione o serviço PostgreSQL → variável `DATABASE_URL`. Depois crie uma variável **ConnectionStrings__DefaultConnection** e use essa referência, ou copie o valor de `DATABASE_URL` do PostgreSQL e cole em `ConnectionStrings__DefaultConnection`.
+
+3. Se não configurar PostgreSQL, a API passa a usar **SQLite** automaticamente no Linux (arquivo `nexusmed.db` no container). Os dados podem ser perdidos em redeploys.
+
+---
+
+## Migrations (criar tabelas no banco)
+
+A API já aplica as **migrations do EF Core na subida** (`db.Database.Migrate()` no `Program.cs`). Ou seja, ao fazer deploy no Railway com a connection string correta, as tabelas são criadas/atualizadas sozinhas.
+
+- **Connection string:** use a **URL completa** do PostgreSQL (ex.: `postgresql://postgres:senha@shuttle.proxy.rlwy.net:33548/railway`), não só `host:porta`.
+- Guia específico: **[MIGRATIONS_RAILWAY.md](MIGRATIONS_RAILWAY.md)**.
 
 ---
 
