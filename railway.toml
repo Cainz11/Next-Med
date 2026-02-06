@@ -1,0 +1,6 @@
+# Railway: usar o Dockerfile da API (monorepo - build a partir da raiz do repo)
+# Não defina "Root Directory" no serviço; deixe vazio para o contexto do build ser a raiz.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.api"

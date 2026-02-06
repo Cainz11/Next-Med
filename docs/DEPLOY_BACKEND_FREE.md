@@ -36,11 +36,10 @@ Railway dá crédito gratuito por mês. Dá para rodar a API + PostgreSQL tranqu
 
 1. **+ New** → **GitHub Repo** de novo (ou **Service** a partir do mesmo repo).
 2. Repositório: **Next-Med**.
-3. Configurações do serviço:
-   - **Root Directory:** deixe em branco (raiz do repo).
-   - **Build Command:** (vazio – usará Docker).
-   - **Dockerfile Path:** `Dockerfile.api`
-   - **Start Command:** (vazio – o Dockerfile já define o `ENTRYPOINT`).
+3. **Importante – Root Directory:** deixe **em branco** (não use `src/NexusMed.WebApi`). O build precisa da raiz do repositório para encontrar Domain, Application e Infrastructure.
+4. O arquivo **railway.toml** na raiz do repo já define o uso do `Dockerfile.api`. Se o Railway ignorar, nas **Variables** do serviço adicione:
+   - **RAILWAY_DOCKERFILE_PATH** = `Dockerfile.api`
+5. Não defina Build Command nem Start Command (o Dockerfile cuida disso).
 
 4. **Variables** (variáveis de ambiente) – adicione:
 
@@ -156,6 +155,20 @@ Os dados ficam no container; se o serviço for recriado, o arquivo some. Para te
 - [ ] Na Vercel, `VITE_API_URL` apontando para a URL do backend (com ou sem `/api` conforme sua API).
 - [ ] Novo deploy do frontend na Vercel após mudar `VITE_API_URL`.
 - [ ] Teste: abrir o site na Vercel, cadastro e login.
+
+---
+
+## Erro: "The referenced project ../NexusMed.Application does not exist"
+
+Isso acontece quando o Railway **não** usa o `Dockerfile.api` e tenta buildar só a pasta do WebApi (sem Domain, Application, Infrastructure).
+
+**Solução:**
+
+1. **Root Directory** do serviço no Railway deve estar **vazio**. Se estiver `src/NexusMed.WebApi`, apague e deixe em branco.
+2. O repositório deve ter o **railway.toml** na raiz (já existe) com `builder = "DOCKERFILE"` e `dockerfilePath = "Dockerfile.api"`.
+3. Se ainda assim usar Nixpacks/Railpack, nas **Variables** do serviço adicione:
+   - **RAILWAY_DOCKERFILE_PATH** = `Dockerfile.api`
+4. Faça um novo deploy (Redeploy ou push no GitHub).
 
 ---
 
