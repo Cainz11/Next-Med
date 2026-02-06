@@ -1,0 +1,337 @@
+/**
+ * Design Tokens - Nexus Med
+ * 
+ * Sistema de design tokens baseado em CSS Custom Properties
+ * Organize em três níveis: Primitivos, Semânticos e Componentes
+ * 
+ * Documentação completa: /docs/DESIGN_SYSTEM.md
+ */
+
+:root {
+  /* ========================================
+     CORES PRIMITIVAS
+     ======================================== */
+  
+  /* Primária - Nexus Blue (Confiança e ação principal) */
+  --color-nexus-blue: #0B6E99;
+  --color-nexus-blue-80: #0D84B8;
+  --color-nexus-blue-60: #3D9FC9;
+  --color-nexus-blue-20: #E6F2F7;
+  
+  /* Secundária - Nexus Green (Saúde e sucesso) */
+  --color-nexus-green: #0D9488;
+  --color-nexus-green-80: #14B8A6;
+  --color-nexus-green-20: #CCFBF1;
+  
+  /* Neutros - Escala de cinzas */
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #F1F5F9;
+  --color-gray-200: #E2E8F0;
+  --color-gray-300: #CBD5E1;
+  --color-gray-400: #94A3B8;
+  --color-gray-500: #64748B;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
+  
+  /* Semânticas - Feedback */
+  --color-red-500: #B91C1C;
+  --color-red-100: #FEE2E2;
+  --color-orange-500: #D97706;
+  --color-orange-100: #FEF3C7;
+  --color-blue-500: #0B6E99;
+  --color-blue-100: #E0F2FE;
+  
+  /* ========================================
+     CORES SEMÂNTICAS (Uso no produto)
+     ======================================== */
+  
+  /* Ação/Primária */
+  --color-primary: var(--color-nexus-blue);
+  --color-primary-hover: var(--color-nexus-blue-80);
+  --color-primary-active: var(--color-nexus-blue-60);
+  --color-primary-subtle: var(--color-nexus-blue-20);
+  
+  /* Secundária */
+  --color-secondary: var(--color-nexus-green);
+  --color-secondary-hover: var(--color-nexus-green-80);
+  --color-secondary-subtle: var(--color-nexus-green-20);
+  
+  /* Feedback */
+  --color-success: var(--color-nexus-green);
+  --color-success-bg: var(--color-nexus-green-20);
+  --color-warning: var(--color-orange-500);
+  --color-warning-bg: var(--color-orange-100);
+  --color-error: var(--color-red-500);
+  --color-error-bg: var(--color-red-100);
+  --color-info: var(--color-blue-500);
+  --color-info-bg: var(--color-blue-100);
+  
+  /* Superfícies */
+  --color-surface: var(--color-gray-50);
+  --color-surface-card: #FFFFFF;
+  --color-surface-hover: var(--color-gray-100);
+  
+  /* Bordas */
+  --color-border: var(--color-gray-200);
+  --color-border-hover: var(--color-gray-300);
+  --color-border-focus: var(--color-primary);
+  
+  /* Texto */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-tertiary: var(--color-gray-400);
+  --color-text-inverse: #FFFFFF;
+  
+  /* ========================================
+     TIPOGRAFIA
+     ======================================== */
+  
+  /* Famílias */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  
+  /* Tamanhos (rem) */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  
+  /* Pesos */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  
+  /* Line height */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+  --leading-loose: 2;
+  
+  /* Letter spacing */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  
+  /* ========================================
+     ESPAÇAMENTO (8pt Grid)
+     ======================================== */
+  
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0_5: 0.125rem;   /*  2px */
+  --space-1: 0.25rem;      /*  4px */
+  --space-1_5: 0.375rem;   /*  6px */
+  --space-2: 0.5rem;       /*  8px */
+  --space-2_5: 0.625rem;   /* 10px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-3_5: 0.875rem;   /* 14px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-7: 1.75rem;      /* 28px */
+  --space-8: 2rem;         /* 32px */
+  --space-9: 2.25rem;      /* 36px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-11: 2.75rem;     /* 44px */
+  --space-12: 3rem;        /* 48px */
+  --space-14: 3.5rem;      /* 56px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  
+  /* ========================================
+     BORDER RADIUS
+     ======================================== */
+  
+  --radius-none: 0;
+  --radius-sm: 0.375rem;   /* 6px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+  
+  /* ========================================
+     SOMBRAS (Elevação)
+     ======================================== */
+  
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.10);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.12);
+  
+  /* Sombras de foco */
+  --shadow-focus: 0 0 0 3px var(--color-primary-subtle);
+  --shadow-focus-error: 0 0 0 3px var(--color-error-bg);
+  
+  /* ========================================
+     TRANSIÇÕES
+     ======================================== */
+  
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slower: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Easing functions */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* ========================================
+     Z-INDEX (Camadas)
+     ======================================== */
+  
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+  
+  /* ========================================
+     LAYOUT
+     ======================================== */
+  
+  /* Container */
+  --max-width: 420px;
+  --max-width-sm: 384px;
+  --max-width-md: 448px;
+  --max-width-lg: 512px;
+  
+  /* Breakpoints (para uso em JS) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  
+  /* ========================================
+     COMPONENTES ESPECÍFICOS
+     ======================================== */
+  
+  /* Botões */
+  --button-height-sm: 36px;
+  --button-height-md: 44px;
+  --button-height-lg: 52px;
+  --button-padding-x: var(--space-4);
+  --button-radius: var(--radius-md);
+  
+  /* Inputs */
+  --input-height: 44px;
+  --input-padding-x: var(--space-4);
+  --input-padding-y: var(--space-3);
+  --input-radius: var(--radius-md);
+  --input-border-width: 1px;
+  
+  /* Cards */
+  --card-padding: var(--space-4);
+  --card-radius: var(--radius-lg);
+  --card-shadow: var(--shadow-md);
+  
+  /* Navigation */
+  --nav-height: 56px;
+  --nav-padding: var(--space-2);
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+/* Tablet */
+@media (min-width: 768px) {
+  :root {
+    --max-width: 480px;
+    --card-padding: var(--space-5);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  :root {
+    --max-width: 540px;
+    --card-padding: var(--space-6);
+  }
+}
+
+/* ========================================
+   MODO ESCURO (Futuro)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Implementar variáveis dark mode aqui */
+    /* --color-surface: #1E293B; */
+    /* --color-text-primary: #F8FAFC; */
+    /* ... */
+  }
+}
+
+/* ========================================
+   UTILITIES
+   ======================================== */
+
+/* Para debug visual de espaçamento */
+:root[data-debug-spacing="true"] * {
+  outline: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+/* Para debug de grid */
+:root[data-debug-grid="true"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(255, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 8px 8px;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ========================================
+   DOCUMENTAÇÃO
+   ======================================== */
+
+/**
+ * COMO USAR:
+ * 
+ * 1. Importe este arquivo no seu index.css ou App.css:
+ *    @import './styles/tokens.css';
+ * 
+ * 2. Use as variáveis nos seus componentes:
+ *    background: var(--color-primary);
+ *    padding: var(--space-4);
+ *    border-radius: var(--radius-md);
+ * 
+ * 3. Para valores dinâmicos, use inline styles:
+ *    style={{ color: 'var(--color-text-secondary)' }}
+ * 
+ * BOAS PRÁTICAS:
+ * - Use sempre tokens em vez de valores hardcoded
+ * - Prefira tokens semânticos (--color-primary) sobre primitivos (--color-nexus-blue)
+ * - Mantenha consistência no uso de espaçamento (grid 8pt)
+ * - Teste contraste de cores (mínimo 4.5:1 para texto)
+ * 
+ * REFERÊNCIAS:
+ * - Documentação completa: /docs/DESIGN_SYSTEM.md
+ * - Showcase interativo: /design-system (no app)
+ * - Guia de componentes: /docs/COMPONENT_GUIDE.md
+ */

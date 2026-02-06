@@ -1,0 +1,301 @@
+---
+description: Padrões C#/.NET e Clean Architecture para o backend
+globs: "**/*.cs,**/src/**/*.csproj"
+alwaysApply: false
+---
+
+# Backend - C# / .NET
+
+## Clean Architecture
+
+Respeite as camadas e suas responsabilidades:
+
+```
+Domain (Core)
+  ↑
+Application (Casos de uso)
+  ↑
+Infrastructure (Implementação)
+  ↑
+WebApi (Apresentação)
+```
+
+### Domain Layer
+
+```csharp
+// ✅ CORRETO - Entidade do domínio
+public class User
+{
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public UserRole Role { get; set; }
+    public DateTime CreatedAt { get; set; }
+    
+    // Navigation properties
+    public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+}
+
+public enum UserRole
+{
+    Patient,
+    Professional
+}
+
+// ❌ ERRADO - Dependência de infraestrutura no domínio
+public class User
+{
+    [Required]  // ← Data annotation da infraestrutura
+    public string Email { get; set; }
+}
+```
+
+### Application Layer
+
+```csharp
+// ✅ CORRETO - Interface de serviço
+public interface IAuthService
+{
+    Task<LoginResponseDto> LoginAsync(LoginRequestDto dto);
+    Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto dto);
+}
+
+// ✅ CORRETO - DTOs
+public class LoginRequestDto
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
+    
+    [Required]
+    [MinLength(6)]
+    public string Password { get; set; } = string.Empty;
+}
+
+public class LoginResponseDto
+{
+    public string AccessToken { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
+    public int UserId { get; set; }
+    public string Email { get; set; } = string.Empty;
+}
+```
+
+### Controllers
+
+```csharp
+// ✅ CORRETO - Controller com tratamento de erros
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
+{
+    private readonly IAuthService _authService;
+    private readonly ILogger<AuthController> _logger;
+    
+    public AuthController(
+        IAuthService authService,
+        ILogger<AuthController> logger)
+    {
+        _authService = authService;
+        _logger = logger;
+    }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+    {
+        try
+        {
+            var response = await _authService.LoginAsync(dto);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized(new { message = "Email ou senha inválidos" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao fazer login");
+            return StatusCode(500, new { message = "Erro interno" });
+        }
+    }
+}
+
+// ❌ ERRADO - Lógica de negócio no controller
+[HttpPost("login")]
+public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+{
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+    if (user == null || !BCrypt.Verify(dto.Password, user.PasswordHash))
+        return Unauthorized();
+    
+    var token = GenerateJwtToken(user);
+    return Ok(new { token });
+}
+```
+
+## Async/Await
+
+```csharp
+// ✅ CORRETO - Sufixo Async e ConfigureAwait(false) em bibliotecas
+public async Task<User> GetByIdAsync(int id)
+{
+    return await _context.Users
+        .FindAsync(id)
+        .ConfigureAwait(false);
+}
+
+public async Task<List<User>> GetAllAsync()
+{
+    return await _context.Users
+        .ToListAsync()
+        .ConfigureAwait(false);
+}
+
+// ❌ ERRADO - Método async sem sufixo Async
+public async Task<User> GetById(int id)
+{
+    return await _context.Users.FindAsync(id);
+}
+```
+
+## LINQ e Entity Framework
+
+```csharp
+// ✅ CORRETO - Queries otimizadas com Include
+public async Task<User> GetByIdWithPrescriptionsAsync(int id)
+{
+    return await _context.Users
+        .Include(u => u.Prescriptions)
+        .FirstOrDefaultAsync(u => u.Id == id);
+}
+
+// ✅ CORRETO - Filtros aplicados no banco
+public async Task<List<User>> GetActiveUsersAsync()
+{
+    return await _context.Users
+        .Where(u => u.IsActive)
+        .OrderBy(u => u.Name)
+        .ToListAsync();
+}
+
+// ❌ ERRADO - N+1 queries
+public async Task<List<User>> GetUsersWithPrescriptions()
+{
+    var users = await _context.Users.ToListAsync();
+    foreach (var user in users)
+    {
+        user.Prescriptions = await _context.Prescriptions
+            .Where(p => p.UserId == user.Id)
+            .ToListAsync();
+    }
+    return users;
+}
+```
+
+## Injeção de Dependências
+
+```csharp
+// ✅ CORRETO - Registro de serviços no Program.cs
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSingleton<IJwtService, JwtService>();
+
+// ✅ CORRETO - Injeção via construtor
+public class AuthService : IAuthService
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IJwtService _jwtService;
+    
+    public AuthService(
+        IUserRepository userRepository,
+        IJwtService jwtService)
+    {
+        _userRepository = userRepository;
+        _jwtService = jwtService;
+    }
+}
+
+// ❌ ERRADO - Instanciação direta
+public class AuthService : IAuthService
+{
+    private readonly UserRepository _userRepository = new UserRepository();
+}
+```
+
+## Autorização
+
+```csharp
+// ✅ CORRETO - Validação de role e userId do token
+[HttpGet]
+[Authorize]
+public async Task<IActionResult> GetPrescriptions()
+{
+    var userId = int.Parse(User.FindFirst("userId")?.Value!);
+    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+    
+    if (role == "Patient")
+    {
+        var prescriptions = await _repository
+            .GetAllAsync(p => p.PatientId == userId);
+        return Ok(prescriptions);
+    }
+    else if (role == "Professional")
+    {
+        var prescriptions = await _repository
+            .GetAllAsync(p => p.ProfessionalId == userId);
+        return Ok(prescriptions);
+    }
+    
+    return Forbid();
+}
+
+// ❌ ERRADO - Sem verificação de autorização
+[HttpGet]
+public async Task<IActionResult> GetAllPrescriptions()
+{
+    var prescriptions = await _repository.GetAllAsync();
+    return Ok(prescriptions);
+}
+```
+
+## Validação
+
+```csharp
+// ✅ CORRETO - Data Annotations em DTOs
+public class RegisterRequestDto
+{
+    [Required(ErrorMessage = "Email é obrigatório")]
+    [EmailAddress(ErrorMessage = "Email inválido")]
+    public string Email { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Senha é obrigatória")]
+    [MinLength(6, ErrorMessage = "Senha deve ter no mínimo 6 caracteres")]
+    public string Password { get; set; } = string.Empty;
+    
+    [Required]
+    public string Name { get; set; } = string.Empty;
+}
+
+// ✅ CORRETO - Validação no controller
+[HttpPost("register")]
+public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto)
+{
+    if (!ModelState.IsValid)
+    {
+        return BadRequest(ModelState);
+    }
+    
+    // ...
+}
+```
+
+## Logging
+
+```csharp
+// ✅ CORRETO - Logging estruturado
+_logger.LogInformation("Usuário {UserId} fez login com sucesso", userId);
+_logger.LogError(ex, "Erro ao processar receita {PrescriptionId}", prescriptionId);
+
+// ❌ ERRADO - String interpolation em logs
+_logger.LogInformation($"Usuário {userId} fez login");
+```

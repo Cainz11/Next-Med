@@ -1,0 +1,311 @@
+---
+description: Padrões de documentação para o projeto Nexus Med
+globs: "**/*.md,**/docs/**/*"
+alwaysApply: false
+---
+
+# Documentação - Nexus Med
+
+## Estrutura
+
+```
+docs/
+├── INDEX.md                          # Índice navegável
+├── ARCHITECTURE.md                   # Arquitetura do sistema
+├── DESIGN_SYSTEM.md                  # Design system completo
+├── COMPONENT_GUIDE.md                # Guia de componentes
+├── DATA_FLOW.md                      # Fluxos de dados
+├── API_ENDPOINTS.md                  # Documentação da API
+├── PLANEJAMENTO_FRONTEND_E_DESIGN_SYSTEM.md
+├── STYLE_GUIDE.md                    # Padrões de código
+└── README.md                         # Overview da pasta docs
+```
+
+## Formato Markdown
+
+### Títulos
+
+```markdown
+# H1 - Título Principal (apenas um por documento)
+
+## H2 - Seção Principal
+
+### H3 - Subseção
+
+#### H4 - Detalhes (evitar mais de 4 níveis)
+```
+
+### Blocos de Código
+
+```markdown
+## Código TypeScript/React
+
+\`\`\`typescript
+// ✅ CORRETO - Exemplo bom
+function exemplo() {
+  return true;
+}
+
+// ❌ ERRADO - Exemplo ruim
+function mal() {
+  return false;
+}
+\`\`\`
+
+## Código C#
+
+\`\`\`csharp
+// ✅ CORRETO
+public class User
+{
+    public int Id { get; set; }
+}
+
+// ❌ ERRADO
+public class user
+{
+    public int id;
+}
+\`\`\`
+```
+
+### Tabelas
+
+```markdown
+| Coluna 1 | Coluna 2 | Descrição |
+|----------|----------|-----------|
+| Valor 1  | Valor 2  | Texto     |
+| Valor 3  | Valor 4  | Texto     |
+```
+
+### Listas
+
+```markdown
+## Lista com marcadores
+- Item 1
+- Item 2
+  - Subitem 2.1
+  - Subitem 2.2
+- Item 3
+
+## Lista numerada
+1. Primeiro passo
+2. Segundo passo
+3. Terceiro passo
+
+## Checklist
+- [ ] Tarefa não completa
+- [x] Tarefa completa
+```
+
+### Links
+
+```markdown
+## Links internos (mesmo repositório)
+[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)
+[README principal](../README.md)
+
+## Links externos
+[Documentação React](https://react.dev/)
+
+## Links para seções
+[Veja a seção de cores](#paleta-de-cores)
+```
+
+### Emojis para Clareza
+
+```markdown
+## Títulos de seção
+🏗️ Arquitetura
+🎨 Design System
+🔄 Fluxo de Dados
+📚 Documentação
+✅ Boas Práticas
+
+## Inline
+- ✅ Fazer isso (bom)
+- ❌ Evitar isso (ruim)
+- ⚠️ Atenção (aviso)
+- 💡 Dica (insight)
+- 🚀 Próximos passos
+```
+
+### Admonições
+
+```markdown
+## Notas importantes
+
+> **Nota**: Informação adicional relevante.
+
+> **⚠️ Atenção**: Cuidado com este comportamento.
+
+> **💡 Dica**: Sugestão útil para melhor resultado.
+```
+
+## Diagramas
+
+### Usando Texto ASCII
+
+```markdown
+\`\`\`
+┌─────────────────────────────────────────┐
+│              Sistema                     │
+├─────────────────────────────────────────┤
+│                                         │
+│  Frontend  →  Backend  →  Database      │
+│                                         │
+└─────────────────────────────────────────┘
+\`\`\`
+```
+
+### Fluxos
+
+```markdown
+\`\`\`
+Usuário
+   │
+   ▼
+Componente
+   │
+   ├─> Estado Local
+   │
+   └─> API Call
+       │
+       ▼
+   Backend
+       │
+       ▼
+   Database
+\`\`\`
+```
+
+## Exemplos de Código
+
+### Sempre Inclua Contexto
+
+```markdown
+## ❌ RUIM - Sem contexto
+
+\`\`\`typescript
+const [data, setData] = useState([]);
+\`\`\`
+
+## ✅ BOM - Com contexto e explicação
+
+### Estado para Lista de Receitas
+
+\`\`\`typescript
+// Estado tipado para armazenar receitas
+const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
+\`\`\`
+
+**Uso**: Este estado gerencia a lista de receitas na página,
+incluindo estados de loading e error para melhor UX.
+```
+
+### Bons e Maus Exemplos
+
+```markdown
+## Pattern: Sempre mostre o que fazer e o que não fazer
+
+### Tratamento de Erros
+
+\`\`\`typescript
+// ✅ CORRETO - Tratamento completo
+try {
+  const data = await api.get('/users');
+  setUsers(data);
+} catch (err) {
+  console.error(err);
+  setError('Erro ao carregar usuários');
+} finally {
+  setLoading(false);
+}
+
+// ❌ ERRADO - Sem tratamento
+const data = await api.get('/users');
+setUsers(data);
+\`\`\`
+```
+
+## Atualização de Documentação
+
+### Quando Atualizar
+
+1. **Mudanças de Arquitetura**: Atualizar [ARCHITECTURE.md](ARCHITECTURE.md)
+2. **Novos Componentes**: Atualizar [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md) e [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)
+3. **Novos Endpoints**: Atualizar [API_ENDPOINTS.md](API_ENDPOINTS.md)
+4. **Mudanças de Fluxo**: Atualizar [DATA_FLOW.md](DATA_FLOW.md)
+5. **Releases**: Atualizar [CHANGELOG.md](../CHANGELOG.md)
+
+### CHANGELOG
+
+```markdown
+## [Versão] - Data YYYY-MM-DD
+
+### Adicionado
+- Nova funcionalidade X
+- Componente Y
+
+### Alterado
+- Mudança no comportamento de Z
+
+### Corrigido
+- Bug no componente W
+
+### Removido
+- Funcionalidade deprecated V
+```
+
+## Metadados no Final
+
+```markdown
+---
+
+**Última atualização**: Fevereiro 2026  
+**Versão**: 2.0.0  
+**Mantido por**: Equipe Nexus Med
+```
+
+## Referências Cruzadas
+
+Sempre referencie documentos relacionados:
+
+```markdown
+## Veja Também
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Arquitetura do sistema
+- [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) - Design tokens
+- [API_ENDPOINTS.md](API_ENDPOINTS.md) - Endpoints disponíveis
+```
+
+## TOC (Índice)
+
+Para documentos longos, inclua índice no início:
+
+```markdown
+## 📋 Índice
+
+- [Seção 1](#seção-1)
+- [Seção 2](#seção-2)
+  - [Subseção 2.1](#subseção-21)
+- [Seção 3](#seção-3)
+```
+
+## Imagens e Diagramas
+
+```markdown
+## Usando imagens (se disponíveis)
+
+![Descrição alternativa](caminho/para/imagem.png)
+
+## Preferir diagramas ASCII para manutenibilidade
+
+\`\`\`
+┌──────────┐     ┌──────────┐
+│ Frontend │────>│ Backend  │
+└──────────┘     └──────────┘
+\`\`\`
+```

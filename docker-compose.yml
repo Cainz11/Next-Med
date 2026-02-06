@@ -1,0 +1,20 @@
+# Nexus Med - Banco de dados SQL Server em Docker
+# Uso: docker-compose up -d
+# Connection string para a API: Server=localhost,1433;Database=NexusMed;User Id=sa;Password=NexusMed@Passw0rd;TrustServerCertificate=True;
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: nexus-med-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "NexusMed@Passw0rd"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - nexus-med-sqldata:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  nexus-med-sqldata:

@@ -1,0 +1,233 @@
+---
+description: Padrões React e TypeScript para o frontend
+globs: "**/*.tsx,**/*.ts,**/frontend/**/*.js"
+alwaysApply: false
+---
+
+# Frontend - React + TypeScript
+
+## Estrutura de Componentes
+
+```typescript
+// ✅ CORRETO - Ordem: Hooks → Effects → Handlers → Render
+import { useState, useEffect } from 'react';
+import { useAuth } from '../core/AuthContext';
+
+export function DashboardPage() {
+  // 1. Hooks
+  const { user, logout } = useAuth();
+  const [data, setData] = useState<Data[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 2. Effects
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // 3. Handlers
+  const handleLogout = () => {
+    logout();
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get('/data');
+      setData(response.data);
+    } catch (err) {
+      setError('Erro ao carregar dados');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 4. Render
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div className="error-msg">{error}</div>;
+
+  return <div className="app-page">{/* ... */}</div>;
+}
+```
+
+## Props e TypeScript
+
+```typescript
+// ✅ CORRETO - Interface para props
+interface ButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+export function Button({ 
+  children, 
+  variant = 'primary', 
+  onClick, 
+  disabled = false 
+}: ButtonProps) {
+  return (
+    <button 
+      className={`btn btn-${variant}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ❌ ERRADO - Props sem tipo
+export function Button(props: any) {
+  return <button>{props.children}</button>;
+}
+```
+
+## Estados e Tratamento de Erros
+
+```typescript
+// ✅ CORRETO - Estado tipado com tratamento de erros completo
+const [users, setUsers] = useState<User[]>([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
+const fetchUsers = async () => {
+  setLoading(true);
+  setError(null);
+  
+  try {
+    const response = await api.get('/users');
+    setUsers(response.data);
+  } catch (err: any) {
+    if (!err.response) {
+      setError('Erro de conexão');
+    } else if (err.response.status === 401) {
+      setError('Não autorizado');
+    } else {
+      setError('Erro ao carregar usuários');
+    }
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// ❌ ERRADO - Sem tratamento de erros
+const fetchUsers = async () => {
+  const response = await api.get('/users');
+  setUsers(response.data);
+};
+```
+
+## Estilos
+
+```typescript
+// ✅ CORRETO - Usar classes CSS com tokens
+<button className="btn btn-primary">Entrar</button>
+
+// ✅ ACEITÁVEL - Inline com tokens para valores dinâmicos
+<div style={{ 
+  color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+  padding: 'var(--space-4)'
+}}>
+  {text}
+</div>
+
+// ❌ ERRADO - Hardcoded inline styles
+<div style={{ color: '#0B6E99', padding: '16px' }}>
+  {text}
+</div>
+```
+
+## Hooks Customizados
+
+```typescript
+// ✅ CORRETO - Prefixo 'use' e tipagem genérica
+function useFetch<T>(url: string) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(url);
+        setData(response.data);
+      } catch (err) {
+        setError('Erro ao carregar');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [url]);
+
+  return { data, loading, error };
+}
+```
+
+## Estados de Loading/Empty/Error
+
+Sempre implemente os três estados:
+
+```typescript
+// ✅ CORRETO
+if (loading) {
+  return <div style={{ textAlign: 'center', padding: 'var(--space-8)' }}>
+    Carregando...
+  </div>;
+}
+
+if (error) {
+  return <div className="error-msg">{error}</div>;
+}
+
+if (data.length === 0) {
+  return <div style={{ textAlign: 'center', padding: 'var(--space-12)' }}>
+    <div style={{ fontSize: '3rem' }}>📭</div>
+    <p>Nenhum item encontrado</p>
+  </div>;
+}
+
+return <div>{/* render data */}</div>;
+```
+
+## Acessibilidade
+
+```typescript
+// ✅ CORRETO - Labels associados, ARIA quando necessário
+<div className="form-group">
+  <label className="label" htmlFor="email">Email</label>
+  <input 
+    type="email" 
+    id="email" 
+    className="input"
+    aria-describedby="email-error"
+    required
+  />
+  {error && <div id="email-error" className="error-msg">{error}</div>}
+</div>
+
+// ✅ CORRETO - ARIA label quando não há label visual
+<button aria-label="Fechar modal" onClick={onClose}>
+  <span>✕</span>
+</button>
+```
+
+## Mobile-First
+
+```typescript
+// ✅ CORRETO - Safe area para iOS
+<div className="app-page" style={{
+  paddingBottom: 'max(var(--space-5), env(safe-area-inset-bottom))'
+}}>
+  {/* conteúdo */}
+</div>
+
+// ✅ CORRETO - Touch targets mínimos 44px
+<button className="btn" style={{ minHeight: '44px', minWidth: '44px' }}>
+  OK
+</button>
+```

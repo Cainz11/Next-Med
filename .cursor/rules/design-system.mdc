@@ -1,0 +1,288 @@
+---
+description: Padrões de design system e UI para o Nexus Med
+globs: "**/*.tsx,**/*.css,**/*.scss"
+alwaysApply: false
+---
+
+# Design System - Nexus Med
+
+## Paleta de Cores
+
+### Sempre Use Tokens CSS
+
+```typescript
+// ✅ CORRETO - Tokens CSS
+style={{ 
+  color: 'var(--color-primary)',
+  background: 'var(--color-surface-card)',
+  borderColor: 'var(--color-border)'
+}}
+
+// ❌ ERRADO - Valores hardcoded
+style={{ 
+  color: '#0B6E99',
+  background: '#FFFFFF',
+  borderColor: '#E2E8F0'
+}}
+```
+
+### Cores Disponíveis
+
+```css
+/* Primárias */
+--color-primary: var(--color-nexus-blue);      /* #0B6E99 */
+--color-primary-hover: var(--color-nexus-blue-80);
+--color-secondary: var(--color-nexus-green);   /* #0D9488 */
+
+/* Semânticas */
+--color-success: var(--color-nexus-green);     /* #0D9488 */
+--color-warning: var(--color-orange-500);      /* #D97706 */
+--color-error: var(--color-red-500);           /* #B91C1C */
+--color-info: var(--color-blue-500);
+
+/* Superfícies */
+--color-surface: var(--color-gray-50);         /* #F8FAFC */
+--color-surface-card: #FFFFFF;
+
+/* Texto */
+--color-text-primary: var(--color-gray-900);   /* #0F172A */
+--color-text-secondary: var(--color-gray-500); /* #64748B */
+```
+
+## Espaçamento (8pt Grid)
+
+```typescript
+// ✅ CORRETO - Tokens de espaçamento
+style={{ 
+  padding: 'var(--space-4)',      // 16px
+  margin: 'var(--space-2)',        // 8px
+  gap: 'var(--space-3)'            // 12px
+}}
+
+// ❌ ERRADO - Valores em pixels
+style={{ 
+  padding: '16px',
+  margin: '8px',
+  gap: '12px'
+}}
+```
+
+### Espaçamentos Disponíveis
+
+```css
+--space-1: 0.25rem;  /*  4px */
+--space-2: 0.5rem;   /*  8px */
+--space-3: 0.75rem;  /* 12px */
+--space-4: 1rem;     /* 16px */
+--space-5: 1.25rem;  /* 20px */
+--space-6: 1.5rem;   /* 24px */
+--space-8: 2rem;     /* 32px */
+--space-10: 2.5rem;  /* 40px */
+--space-12: 3rem;    /* 48px */
+```
+
+## Componentes
+
+### Botões
+
+```typescript
+// ✅ CORRETO - Classes CSS padronizadas
+<button className="btn btn-primary">Entrar</button>
+<button className="btn btn-secondary">Cancelar</button>
+<button className="btn btn-ghost">Sair</button>
+
+// ✅ CORRETO - Estados
+<button className="btn btn-primary" disabled={loading}>
+  {loading ? 'Carregando...' : 'Salvar'}
+</button>
+
+// ❌ ERRADO - Estilos inline complexos
+<button style={{ 
+  background: '#0B6E99', 
+  padding: '12px 20px',
+  borderRadius: '8px'
+}}>
+  Entrar
+</button>
+```
+
+### Inputs
+
+```typescript
+// ✅ CORRETO - Estrutura com label e erro
+<div className="form-group">
+  <label className="label" htmlFor="email">Email</label>
+  <input 
+    type="email" 
+    id="email" 
+    className="input"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    required
+  />
+  {error && <div className="error-msg">{error}</div>}
+</div>
+
+// ❌ ERRADO - Input sem label
+<input 
+  type="email" 
+  placeholder="Email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+/>
+```
+
+### Cards
+
+```typescript
+// ✅ CORRETO - Card padronizado
+<div className="card">
+  <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-semibold)' }}>
+    Título
+  </h3>
+  <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>
+    Descrição
+  </p>
+</div>
+
+// ✅ CORRETO - Card interativo
+<Link to="/prescriptions" className="card" style={{ 
+  display: 'block', 
+  color: 'inherit', 
+  textDecoration: 'none' 
+}}>
+  <strong>Receituário</strong>
+  <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+    Ver receitas e prescrições
+  </p>
+</Link>
+```
+
+## Tipografia
+
+```typescript
+// ✅ CORRETO - Hierarquia tipográfica
+<h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-bold)' }}>
+  Título Principal
+</h1>
+
+<h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)' }}>
+  Seção
+</h2>
+
+<p style={{ fontSize: 'var(--text-base)', lineHeight: 'var(--leading-normal)' }}>
+  Texto corpo
+</p>
+
+<p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+  Texto secundário
+</p>
+
+// ❌ ERRADO - Tamanhos hardcoded
+<h1 style={{ fontSize: '24px', fontWeight: 700 }}>Título</h1>
+```
+
+## Acessibilidade
+
+### Contraste
+
+```typescript
+// ✅ CORRETO - Contraste mínimo 4.5:1 (WCAG AA)
+<p style={{ color: 'var(--color-text-primary)' }}>
+  Texto legível
+</p>
+
+// ⚠️ ATENÇÃO - Verificar contraste
+<p style={{ color: 'var(--color-text-secondary)' }}>
+  Texto secundário (contraste reduzido)
+</p>
+```
+
+### Touch Targets
+
+```typescript
+// ✅ CORRETO - Mínimo 44x44px para mobile
+<button className="btn" style={{ minHeight: '44px', minWidth: '44px' }}>
+  OK
+</button>
+
+// ❌ ERRADO - Touch target muito pequeno
+<button style={{ padding: '4px 8px' }}>OK</button>
+```
+
+### Labels e ARIA
+
+```typescript
+// ✅ CORRETO - Label associado
+<label htmlFor="password">Senha</label>
+<input type="password" id="password" className="input" />
+
+// ✅ CORRETO - ARIA quando não há label visual
+<button aria-label="Fechar" onClick={onClose}>
+  <span>✕</span>
+</button>
+
+// ✅ CORRETO - ARIA para feedback
+<div role="alert" aria-live="polite">
+  {successMessage}
+</div>
+```
+
+## Mobile-First
+
+### Safe Area (iOS)
+
+```typescript
+// ✅ CORRETO - Respeitar safe area
+<div className="app-page" style={{
+  paddingBottom: 'max(var(--space-5), env(safe-area-inset-bottom))'
+}}>
+  {/* conteúdo */}
+</div>
+
+// ✅ CORRETO - Bottom nav com safe area
+<nav style={{
+  position: 'fixed',
+  bottom: 0,
+  paddingBottom: 'max(var(--space-2), env(safe-area-inset-bottom))'
+}}>
+  {/* navegação */}
+</nav>
+```
+
+### Viewport
+
+```css
+/* ✅ CORRETO - Dynamic viewport height */
+body {
+  min-height: 100dvh;  /* dvh em vez de vh */
+}
+
+/* ❌ ERRADO - vh não considera barra de endereço mobile */
+body {
+  min-height: 100vh;
+}
+```
+
+## Responsividade
+
+```typescript
+// ✅ CORRETO - Max-width para mobile
+<div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+  {/* conteúdo */}
+</div>
+
+// ✅ CORRETO - Breakpoints via CSS
+@media (min-width: 768px) {
+  :root {
+    --max-width: 480px;
+  }
+}
+```
+
+## Referências
+
+- Documentação completa: [DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
+- Showcase interativo: `/design-system` no app
+- Guia de componentes: [COMPONENT_GUIDE.md](docs/COMPONENT_GUIDE.md)
+- Tokens CSS: [tokens.css](frontend/src/styles/tokens.css)

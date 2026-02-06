@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NexusMed.Application/NexusMed.Application.csproj" />
+    <Project Path="src/NexusMed.Domain/NexusMed.Domain.csproj" />
+    <Project Path="src/NexusMed.Infrastructure/NexusMed.Infrastructure.csproj" />
+    <Project Path="src/NexusMed.WebApi/NexusMed.WebApi.csproj" />
+  </Folder>
+</Solution>

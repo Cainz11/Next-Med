@@ -1,0 +1,6 @@
+@NexusMed.WebApi_HostAddress = http://localhost:5053
+
+GET {{NexusMed.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,76 @@
+---
+description: Princípios fundamentais e padrões do projeto Nexus Med
+alwaysApply: true
+---
+
+# Nexus Med - Princípios Fundamentais
+
+## Arquitetura
+
+- **Backend**: .NET 10 com Clean Architecture (Domain, Application, Infrastructure, WebApi)
+- **Frontend**: React 18 + TypeScript + Vite, mobile-first
+- **Padrões**: SOLID, DRY, KISS, Clean Code
+
+## Nomenclatura
+
+### Frontend (TypeScript/React)
+- **Arquivos**: PascalCase (`LoginPage.tsx`, `AuthContext.tsx`)
+- **Componentes**: PascalCase (`function LoginPage()`)
+- **Variáveis/Funções**: camelCase (`userName`, `handleSubmit`)
+- **Constantes globais**: UPPER_SNAKE_CASE (`API_BASE_URL`)
+
+### Backend (C#/.NET)
+- **Classes/Interfaces**: PascalCase (`User`, `IUserRepository`)
+- **Métodos**: PascalCase (`GetByIdAsync`)
+- **Variáveis locais**: camelCase (`userName`, `isActive`)
+- **Propriedades**: PascalCase (`Email`, `IsActive`)
+
+## Design System
+
+### Cores
+Sempre use design tokens em vez de valores hardcoded:
+
+```typescript
+// ✅ CORRETO
+style={{ color: 'var(--color-primary)' }}
+
+// ❌ ERRADO
+style={{ color: '#0B6E99' }}
+```
+
+### Espaçamento
+Use o sistema de grid 8pt (tokens CSS):
+
+```typescript
+// ✅ CORRETO
+style={{ padding: 'var(--space-4)', margin: 'var(--space-2)' }}
+
+// ❌ ERRADO
+style={{ padding: '16px', margin: '8px' }}
+```
+
+## Documentação
+
+- Para mudanças significativas, atualize o [CHANGELOG.md](../CHANGELOG.md)
+- Mantenha consistência com os padrões do [STYLE_GUIDE.md](docs/STYLE_GUIDE.md)
+- Consulte [DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) para questões de UI
+- Veja [ARCHITECTURE.md](docs/ARCHITECTURE.md) para entender a estrutura
+
+## Commits
+
+Siga o padrão Conventional Commits:
+
+```bash
+feat(auth): adiciona refresh token automático
+fix(prescriptions): corrige filtro por paciente
+docs: atualiza README com instruções
+refactor(api): extrai lógica de validação
+```
+
+## Princípios
+
+1. **Mobile-First**: Sempre desenvolva pensando em mobile primeiro
+2. **Acessibilidade**: WCAG 2.2 (AA) - contraste mínimo 4.5:1, áreas de toque 44px+
+3. **Clean Code**: Nomes descritivos, funções pequenas, DRY
+4. **Type Safety**: Evite `any` no TypeScript
+5. **Async/Await**: Use sempre que possível, com tratamento de erros
