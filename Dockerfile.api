@@ -1,0 +1,22 @@
+# Build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Copiar apenas os .csproj para restaurar (cache de camadas)
+COPY src/NexusMed.Domain/NexusMed.Domain.csproj       src/NexusMed.Domain/
+COPY src/NexusMed.Application/NexusMed.Application.csproj src/NexusMed.Application/
+COPY src/NexusMed.Infrastructure/NexusMed.Infrastructure.csproj src/NexusMed.Infrastructure/
+COPY src/NexusMed.WebApi/NexusMed.WebApi.csproj       src/NexusMed.WebApi/
+
+RUN dotnet restore src/NexusMed.WebApi/NexusMed.WebApi.csproj
+
+# Copiar o resto do código e publicar
+COPY src/ src/
+RUN dotnet publish src/NexusMed.WebApi/NexusMed.WebApi.csproj -c Release -o /app/publish
+
+# Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+EXPOSE 8080
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "NexusMed.WebApi.dll"]

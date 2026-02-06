@@ -65,6 +65,12 @@ O frontend pode ser publicado na [Vercel](https://vercel.com). O backend .NET de
 
 Guia completo: **[docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md)**
 
+### Backend + banco de graça (testes)
+
+Para hospedar a API .NET e o banco (PostgreSQL ou SQLite) em plano gratuito:
+
+- **Railway** ou **Render**: use o **Dockerfile.api** na raiz e siga **[docs/DEPLOY_BACKEND_FREE.md](docs/DEPLOY_BACKEND_FREE.md)**.
+
 ### Banco em Docker (SQL Server)
 
 Para subir apenas o banco de dados com Docker:

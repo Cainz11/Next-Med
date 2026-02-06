@@ -301,6 +301,7 @@ Novo no projeto? Comece aqui:
 | **Quick Start** | [QUICK_START.md](QUICK_START.md) | Tudo |
 | **Regras de IA** | [.cursor/rules/README.md](../.cursor/rules/README.md) | Regras automáticas |
 | **Deploy Vercel** | [DEPLOY_VERCEL.md](DEPLOY_VERCEL.md) | Publicar frontend na Vercel |
+| **Backend + DB grátis** | [DEPLOY_BACKEND_FREE.md](DEPLOY_BACKEND_FREE.md) | Railway / Render para testes |
 | **Subir no Git** | [GIT_SETUP.md](GIT_SETUP.md) | Publicar repositório no GitHub/GitLab |
 
 ---
