@@ -1,10 +1,16 @@
 /**
  * Base URL da API.
  * - Desenvolvimento: /api (proxy do Vite para localhost:5053)
- * - Produção (Vercel): defina VITE_API_URL nas variáveis de ambiente
- *   Ex: https://sua-api.railway.app ou https://nexus-med-api.azurewebsites.net
+ * - Produção (Vercel): defina VITE_API_URL com URL completa, ex: https://sua-api.up.railway.app
+ *   (obrigatório usar https:// para não ser tratado como path relativo)
  */
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+function getApiBase(): string {
+  const raw = import.meta.env.VITE_API_URL?.trim() || '';
+  if (!raw) return '/api';
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw.replace(/\/$/, '');
+  return `https://${raw.replace(/\/$/, '')}`;
+}
+const API_BASE = getApiBase();
 
 function getToken(): string | null {
   return localStorage.getItem('accessToken');
