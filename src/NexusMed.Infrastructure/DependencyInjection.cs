@@ -32,12 +32,17 @@ public static class DependencyInjection
             ? InferProvider(connectionString)
             : providerConfig;
 
-        // LocalDB só existe no Windows (ex.: Railway/Render usam Linux)
-        if (connectionString.Contains("(localdb)", StringComparison.OrdinalIgnoreCase) && !OperatingSystem.IsWindows())
+        // Linux (Railway, Render, Docker): SqlServer/LocalDB não existem — forçar SQLite se não for Npgsql
+        if (!OperatingSystem.IsWindows())
         {
-            connectionString = "Data Source=nexusmed.db";
-            provider = "Sqlite";
+            if (connectionString.Contains("(localdb)", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(provider, "SqlServer", StringComparison.OrdinalIgnoreCase))
+            {
+                connectionString = "Data Source=nexusmed.db";
+                provider = "Sqlite";
+            }
         }
+
         services.AddDbContext<AppDbContext>(options =>
         {
             switch (provider)
