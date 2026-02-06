@@ -59,22 +59,44 @@ if ([string]::IsNullOrWhiteSpace($status)) {
 # Garantir branch main
 git branch -M main 2>$null
 
-# Remote
-$remoteUrl = git remote get-url origin 2>$null
-if (-not $remoteUrl) {
+# Remote (evitar erro quando origin ainda não existe)
+$defaultRepoUrl = "https://github.com/Cainz11/Next-Med.git"
+$previousErrorAction = $ErrorActionPreference
+$ErrorActionPreference = "SilentlyContinue"
+$remoteUrl = (git remote get-url origin 2>$null)
+$ErrorActionPreference = $previousErrorAction
+if (-not $remoteUrl -or ($remoteUrl -match "error:")) {
     Write-Host ""
-    Write-Host "Cole a URL do seu repositório (GitHub/GitLab/Bitbucket):" -ForegroundColor Yellow
-    Write-Host "Exemplo: https://github.com/seu-usuario/nexus-med.git" -ForegroundColor Gray
-    $remoteUrl = Read-Host "URL"
-    if ($remoteUrl) {
-        git remote add origin $remoteUrl.Trim()
-        Write-Host "[OK] Remote 'origin' configurado." -ForegroundColor Green
+    Write-Host "Repositório remoto não configurado. Usar padrão Next-Med? (S/N)" -ForegroundColor Yellow
+    Write-Host "  $defaultRepoUrl" -ForegroundColor Gray
+    $usarPadrao = Read-Host "Pressione Enter para Sim, ou N para digitar outra URL"
+    if ($usarPadrao -eq "" -or $usarPadrao -eq "S" -or $usarPadrao -eq "s") {
+        $remoteUrl = $defaultRepoUrl
+        git remote add origin $remoteUrl
+        Write-Host "[OK] Remote 'origin' configurado: $remoteUrl" -ForegroundColor Green
+    } else {
+        Write-Host "Cole a URL do repositório (ex: https://github.com/usuario/repo.git):" -ForegroundColor Yellow
+        $remoteUrl = Read-Host "URL"
+        if ($remoteUrl) {
+            git remote add origin $remoteUrl.Trim()
+            Write-Host "[OK] Remote 'origin' configurado." -ForegroundColor Green
+            $remoteUrl = $remoteUrl.Trim()
+        }
     }
 } else {
     Write-Host "[OK] Remote já configurado: $remoteUrl" -ForegroundColor Green
 }
 
 Write-Host ""
+if (-not $remoteUrl) {
+    Write-Host "Nenhum remote configurado. Para adicionar e enviar depois, use:" -ForegroundColor Yellow
+    Write-Host "  git remote add origin https://github.com/Cainz11/Next-Med.git" -ForegroundColor White
+    Write-Host "  git push -u origin main" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Documentação: docs\GIT_SETUP.md" -ForegroundColor Cyan
+    exit 0
+}
+
 Write-Host "Enviando para o remoto (git push -u origin main)..." -ForegroundColor Yellow
 try {
     git push -u origin main
@@ -83,8 +105,12 @@ try {
 } catch {
     Write-Host ""
     Write-Host "Se pedir usuário/senha:" -ForegroundColor Yellow
-    Write-Host "  - GitHub: use um Personal Access Token em vez da senha." -ForegroundColor Gray
-    Write-Host "    Criar em: GitHub -> Settings -> Developer settings -> Personal access tokens" -ForegroundColor Gray
+    Write-Host "  Username: Cainz11" -ForegroundColor Gray
+    Write-Host "  Password: cole seu Personal Access Token (não a senha da conta)" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "Para não digitar o token toda vez (só no seu PC, NUNCA commite o token):" -ForegroundColor Yellow
+    Write-Host "  git remote set-url origin https://Cainz11:SEU_TOKEN_AQUI@github.com/Cainz11/Next-Med.git" -ForegroundColor Gray
+    Write-Host "  Depois: git push -u origin main" -ForegroundColor Gray
     Write-Host ""
     Write-Host "Tente manualmente:" -ForegroundColor Yellow
     Write-Host "  git push -u origin main" -ForegroundColor White
