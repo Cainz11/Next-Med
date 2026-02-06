@@ -49,7 +49,11 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<NexusMed.Infrastructure.Persistence.AppDbContext>();
-    db.Database.Migrate();
+    // Migrations atuais foram geradas para SQL Server; SQLite não entende uniqueidentifier/nvarchar(max). Para SQLite usa EnsureCreated.
+    if (db.Database.IsSqlite())
+        db.Database.EnsureCreated();
+    else
+        db.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())
