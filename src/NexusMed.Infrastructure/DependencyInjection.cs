@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NexusMed.Application.Auth;
@@ -45,6 +46,8 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(options =>
         {
+            // Permite Migrate() quando o snapshot foi gerado com outro provider (ex.: SQL Server) e a app roda com Npgsql/SQLite
+            options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
             switch (provider)
             {
                 case "SqlServer":
