@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Scalar.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NexusMed.Infrastructure;
@@ -41,6 +42,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference(); // UI em /scalar (compatível com .NET 10)
+}
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -55,8 +62,5 @@ using (var scope = app.Services.CreateScope())
     else
         db.Database.Migrate();
 }
-
-if (app.Environment.IsDevelopment())
-    app.MapOpenApi();
 
 app.Run();
