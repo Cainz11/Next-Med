@@ -1,21 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../core/AuthContext';
-import { NotificationBell } from '../components/NotificationBell';
 
 export function DashboardPage() {
-  const { email, role, logout } = useAuth();
+  const { email, role } = useAuth();
 
   return (
     <div className="app-page">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.5rem' }}>
-        <span className="logo" style={{ marginBottom: 0, fontSize: '1.25rem' }}>Nexus Med</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <NotificationBell />
-          <button type="button" className="btn btn-ghost" onClick={logout} style={{ width: 'auto', padding: '0.5rem' }}>
-            Sair
-          </button>
-        </div>
-      </header>
       <h1 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Olá!</h1>
       <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{email} · {role === 'Patient' ? 'Paciente' : 'Profissional'}</p>
 

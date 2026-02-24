@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -15,12 +15,12 @@ namespace NexusMed.Infrastructure.Persistence.Migrations
                 name: "AvailabilitySlots",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StartAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SlotType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<Guid>(nullable: false),
+                    ProfessionalId = table.Column<Guid>(nullable: false),
+                    StartAt = table.Column<DateTime>(nullable: false),
+                    EndAt = table.Column<DateTime>(nullable: false),
+                    SlotType = table.Column<string>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -36,16 +36,16 @@ namespace NexusMed.Infrastructure.Persistence.Migrations
                 name: "Notifications",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RelatedEntityId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RelatedEntityType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Title = table.Column<string>(nullable: false),
+                    Body = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: false),
+                    RelatedEntityId = table.Column<string>(nullable: true),
+                    RelatedEntityType = table.Column<string>(nullable: true),
+                    IsRead = table.Column<bool>(nullable: false),
+                    ReadAt = table.Column<DateTime>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,19 +62,19 @@ namespace NexusMed.Infrastructure.Persistence.Migrations
                 name: "Appointments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SlotId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ScheduledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AppointmentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CancelledAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CancellationReason = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<Guid>(nullable: false),
+                    PatientId = table.Column<Guid>(nullable: false),
+                    ProfessionalId = table.Column<Guid>(nullable: false),
+                    SlotId = table.Column<Guid>(nullable: true),
+                    ScheduledAt = table.Column<DateTime>(nullable: false),
+                    DurationMinutes = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(nullable: false),
+                    AppointmentType = table.Column<string>(nullable: false),
+                    Notes = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: true),
+                    CancelledAt = table.Column<DateTime>(nullable: true),
+                    CancellationReason = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,14 +100,14 @@ namespace NexusMed.Infrastructure.Persistence.Migrations
                 name: "ClinicalNotes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppointmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NoteType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(nullable: false),
+                    AppointmentId = table.Column<Guid>(nullable: true),
+                    PatientId = table.Column<Guid>(nullable: false),
+                    ProfessionalId = table.Column<Guid>(nullable: false),
+                    Content = table.Column<string>(nullable: false),
+                    NoteType = table.Column<string>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {

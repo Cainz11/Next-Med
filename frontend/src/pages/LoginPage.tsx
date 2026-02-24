@@ -29,7 +29,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="app-page">
+    <div className="auth-layout">
       <div className="logo">Nexus Med</div>
       <h1 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', textAlign: 'center' }}>Entrar</h1>
       <form onSubmit={handleSubmit}>

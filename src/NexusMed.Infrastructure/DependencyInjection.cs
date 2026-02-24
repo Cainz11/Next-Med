@@ -48,6 +48,10 @@ public static class DependencyInjection
             }
         }
 
+        // Npgsql: normalizar URL postgresql:// para formato Host=;Port=;... (evita erro "Format of the initialization string..." no dotnet ef e em alguns hosts)
+        if ((provider is "Npgsql" or "PostgreSQL") && connectionString.TrimStart().StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+            connectionString = NormalizePostgresUrl(connectionString);
+
         services.AddDbContext<AppDbContext>(options =>
         {
             // Permite Migrate() quando o snapshot foi gerado com outro provider (ex.: SQL Server) e a app roda com Npgsql/SQLite
@@ -145,5 +149,35 @@ public static class DependencyInjection
         if (cs.Contains("Host=", StringComparison.OrdinalIgnoreCase) || cs.Contains("Database=") && cs.Contains("Port="))
             return "Npgsql";
         return "Sqlite";
+    }
+
+    /// <summary>Converte URL postgresql:// em formato Host=;Port=;... para evitar erro de parsing no Npgsql/dotnet ef.</summary>
+    private static string NormalizePostgresUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return url;
+        var u = url.Trim();
+        if (!u.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) && !u.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+            return url;
+        try
+        {
+            var uri = new Uri(u);
+            var host = uri.Host;
+            var port = uri.Port > 0 ? uri.Port : 5432;
+            var database = string.IsNullOrEmpty(uri.AbsolutePath) ? "railway" : uri.AbsolutePath.TrimStart('/').Split('?')[0];
+            var userInfo = uri.UserInfo;
+            var username = "postgres";
+            var password = "";
+            if (!string.IsNullOrEmpty(userInfo))
+            {
+                var colonIndex = userInfo.IndexOf(':');
+                username = colonIndex >= 0 ? Uri.UnescapeDataString(userInfo[..colonIndex]) : Uri.UnescapeDataString(userInfo);
+                password = colonIndex >= 0 && colonIndex < userInfo.Length - 1 ? Uri.UnescapeDataString(userInfo[(colonIndex + 1)..]) : "";
+            }
+            return $"Host={host};Port={port};Database={database};Username={username};Password={password}";
+        }
+        catch
+        {
+            return url;
+        }
     }
 }

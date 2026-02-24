@@ -33,10 +33,8 @@ body {
 
 #root {
   min-height: 100dvh;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  background: var(--surface-card);
-  box-shadow: 0 0 0 1px var(--border);
+  width: 100%;
+  background: var(--surface);
 }
 
 a {
@@ -351,6 +349,177 @@ button {
   margin-bottom: 0;
 }
 
+/* ========== App Layout (área logada) ========== */
+.app-layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+  min-height: 100dvh;
+  background: var(--surface);
+}
+.app-layout__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-layout__bar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.app-layout__logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.app-layout__logo:hover { color: var(--primary-light); }
+.app-layout__back {
+  font-size: 0.9375rem;
+  color: var(--primary);
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.app-layout__back:hover { background: var(--surface); }
+.app-layout__bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.app-layout__user {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 479px) {
+  .app-layout__user { display: none; }
+}
+.app-layout__logout {
+  width: auto !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.9375rem;
+}
+.app-layout__sidebar {
+  display: none;
+}
+.app-layout__main {
+  min-height: 0;
+  overflow: auto;
+}
+.app-layout__content {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+
+/* Desktop: sidebar + conteúdo largo */
+@media (min-width: 1024px) {
+  .app-layout {
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 240px 1fr;
+  }
+  .app-layout__bar {
+    grid-column: 1 / -1;
+  }
+  .app-layout__sidebar {
+    display: block;
+    background: var(--surface-card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1rem 0;
+  }
+  .app-layout__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  .app-layout__nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: background var(--transition), color var(--transition);
+  }
+  .app-layout__nav-link:hover {
+    background: var(--surface);
+    color: var(--text);
+  }
+  .app-layout__nav-link--active {
+    background: var(--surface);
+    color: var(--primary);
+  }
+  .app-layout__nav-icon {
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+  .app-layout__nav-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .app-layout__main {
+    overflow-y: auto;
+  }
+  .app-layout__content {
+    max-width: 720px;
+    margin: 0;
+    padding: 1.5rem 2rem;
+  }
+}
+
+/* Páginas de login/registro: centralizadas em telas grandes */
+.auth-layout {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--surface-card);
+}
+@media (min-width: 768px) {
+  .auth-layout {
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin: 2rem auto;
+    min-height: auto;
+  }
+}
+
 @media (min-width: 768px) {
   :root { --max-width: 480px; }
+}
+@media (min-width: 1024px) {
+  .toast-container {
+    left: auto;
+    right: 2rem;
+    transform: none;
+    max-width: 360px;
+  }
 }

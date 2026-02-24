@@ -44,28 +44,36 @@ Depois disso, faça um **Redeploy** do serviço da API. Na primeira subida, o `M
 
 Só é necessário se você quiser aplicar migrations a partir do seu PC (por exemplo, em outro ambiente).
 
-1. No seu PC, defina a connection string do banco do Railway (use a mesma `DATABASE_URL` do Railway, no formato que o Npgsql aceita).
-2. Na raiz do repositório:
+**Importante:** use o formato **chave=valor** do Npgsql (não a URL `postgresql://`), senão pode aparecer o erro *"Format of the initialization string does not conform to specification starting at index 0"* (o `dotnet ef` às vezes usa a connection string do `appsettings.json` se a variável não for lida).
 
-```bash
-cd C:\Users\Caio\nexus-med
+1. Na raiz do repositório, defina as variáveis e rode o comando **na mesma sessão** (ou numa única linha).
 
-# Usando a URL do Railway (substitua pela sua DATABASE_URL completa)
-set ConnectionStrings__DefaultConnection=postgresql://postgres:SUA_SENHA@shuttle.proxy.rlwy.net:33548/railway
-set DatabaseProvider=Npgsql
-
-dotnet ef database update --project src/NexusMed.Infrastructure --startup-project src/NexusMed.WebApi
-```
-
-No PowerShell:
+**PowerShell (recomendado – formato chave=valor):**
 
 ```powershell
-$env:ConnectionStrings__DefaultConnection = "postgresql://postgres:SUA_SENHA@shuttle.proxy.rlwy.net:33548/railway"
+cd C:\Users\Caio\nexus-med
+
+# Substitua HOST, PORTA, SENHA pelo valor da sua DATABASE_URL do Railway
+$env:ConnectionStrings__DefaultConnection = "Host=shuttle.proxy.rlwy.net;Port=33548;Database=railway;Username=postgres;Password=SUA_SENHA"
 $env:DatabaseProvider = "Npgsql"
 dotnet ef database update --project src/NexusMed.Infrastructure --startup-project src/NexusMed.WebApi
 ```
 
-Substitua `SUA_SENHA` pela senha real que está na `DATABASE_URL` do Railway.
+Ou numa única linha (para garantir que as variáveis sejam usadas):
+
+```powershell
+cd C:\Users\Caio\nexus-med; $env:ConnectionStrings__DefaultConnection = "Host=shuttle.proxy.rlwy.net;Port=33548;Database=railway;Username=postgres;Password=SUA_SENHA"; $env:DatabaseProvider = "Npgsql"; dotnet ef database update --project src/NexusMed.Infrastructure --startup-project src/NexusMed.WebApi
+```
+
+**Cmd:**
+
+```cmd
+set ConnectionStrings__DefaultConnection=Host=shuttle.proxy.rlwy.net;Port=33548;Database=railway;Username=postgres;Password=SUA_SENHA
+set DatabaseProvider=Npgsql
+dotnet ef database update --project src/NexusMed.Infrastructure --startup-project src/NexusMed.WebApi
+```
+
+Substitua `SUA_SENHA` (e, se for o caso, host/porta/database) pelos valores da **DATABASE_URL** do Railway.
 
 ---
 

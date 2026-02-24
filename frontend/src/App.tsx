@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './core/AuthContext';
 import { ToastProvider } from './components/ToastContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AppLayout } from './components/AppLayout';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -24,20 +25,23 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
-      <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-      <Route path="/appointments" element={<ProtectedRoute><AppointmentsPage /></ProtectedRoute>} />
-      <Route path="/clinical-notes" element={<ProtectedRoute><ClinicalNotesPage /></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-      <Route path="/prescriptions" element={<ProtectedRoute><PrescriptionsPage /></ProtectedRoute>} />
-      <Route path="/exams" element={<ProtectedRoute><ExamsPage /></ProtectedRoute>} />
-      <Route path="/health-metrics" element={<ProtectedRoute><HealthMetricsPage /></ProtectedRoute>} />
-      <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-      <Route path="/messages/:id" element={<ProtectedRoute><ConversationDetailPage /></ProtectedRoute>} />
-      <Route path="/professionals" element={<ProtectedRoute><ProfessionalsPage /></ProtectedRoute>} />
-      <Route path="/ratings/:id" element={<ProtectedRoute><RatingsPage /></ProtectedRoute>} />
-      <Route path="/lgpd" element={<ProtectedRoute><LgpdPage /></ProtectedRoute>} />
-      <Route path="/design-system" element={<ProtectedRoute><DesignSystemPage /></ProtectedRoute>} />
-      <Route path="/" element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />} />
+      <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="appointments" element={<AppointmentsPage />} />
+        <Route path="clinical-notes" element={<ClinicalNotesPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="prescriptions" element={<PrescriptionsPage />} />
+        <Route path="exams" element={<ExamsPage />} />
+        <Route path="health-metrics" element={<HealthMetricsPage />} />
+        <Route path="messages" element={<MessagesPage />} />
+        <Route path="messages/:id" element={<ConversationDetailPage />} />
+        <Route path="professionals" element={<ProfessionalsPage />} />
+        <Route path="ratings/:id" element={<RatingsPage />} />
+        <Route path="lgpd" element={<LgpdPage />} />
+        <Route path="design-system" element={<DesignSystemPage />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -350,7 +350,7 @@ export function AppointmentsPage() {
             <EmptyState
               icon="🕐"
               title="Nenhum horário no período"
-              description="Defina as datas acima e clique em \"Criar horários\" para liberar sua agenda."
+              description='Defina as datas acima e clique em "Criar horários" para liberar sua agenda.'
             />
           )}
           {!loadingSlots && slots.length > 0 && (
@@ -415,7 +415,7 @@ export function AppointmentsPage() {
             <EmptyState
               icon="👨‍⚕️"
               title="Selecione um profissional"
-              description="Escolha o profissional, o período (de e até) e clique em \"Buscar horários disponíveis\"."
+              description='Escolha o profissional, o período (de e até) e clique em "Buscar horários disponíveis".'
             />
           )}
         </>
