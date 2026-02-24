@@ -490,6 +490,37 @@ button {
   }
 }
 
+/* Dashboard: em desktop mostra só a dica (nav é o menu lateral); em mobile mostra os cards */
+.dashboard-hint {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+.dashboard-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.dashboard-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+.dashboard-card__icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+@media (min-width: 1024px) {
+  .dashboard-hint { display: block; }
+  .dashboard-cards { display: none; }
+}
+@media (max-width: 1023px) {
+  .dashboard-hint { display: none; }
+  .dashboard-cards { display: flex; }
+}
+
 /* ========== Landing (tela inicial) ========== */
 .landing {
   min-height: 100dvh;

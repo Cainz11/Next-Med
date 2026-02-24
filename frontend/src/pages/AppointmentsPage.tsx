@@ -65,8 +65,7 @@ export function AppointmentsPage() {
   const [slotTo, setSlotTo] = useState('');
   const [slotType, setSlotType] = useState('Presencial');
   const [bookProfessionalId, setBookProfessionalId] = useState('');
-  const [bookFrom, setBookFrom] = useState('');
-  const [bookTo, setBookTo] = useState('');
+  const [bookDate, setBookDate] = useState('');
   const [saving, setSaving] = useState(false);
   const [createError, setCreateError] = useState('');
   const [cancelReason, setCancelReason] = useState<Record<string, string>>({});
@@ -103,13 +102,17 @@ export function AppointmentsPage() {
   }, [role, tab]);
 
   const loadAvailableSlots = () => {
-    if (!bookProfessionalId || !bookFrom || !bookTo) {
-      addToast('Selecione o profissional e o período (de/até).', 'error');
+    if (!bookProfessionalId || !bookDate) {
+      addToast('Selecione o profissional e a data.', 'error');
       return;
     }
+    const from = new Date(bookDate);
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(bookDate);
+    to.setHours(23, 59, 59, 999);
     setLoadingAvailable(true);
     setCreateError('');
-    api<SlotItem[]>(`/appointments/available-slots?professionalId=${bookProfessionalId}&from=${new Date(bookFrom).toISOString()}&to=${new Date(bookTo).toISOString()}`)
+    api<SlotItem[]>(`/appointments/available-slots?professionalId=${bookProfessionalId}&from=${from.toISOString()}&to=${to.toISOString()}`)
       .then((list) => {
         setAvailableSlots(list);
         if (list.length === 0) addToast('Nenhum horário livre neste período. Tente outras datas.', 'error');
@@ -117,6 +120,10 @@ export function AppointmentsPage() {
       .catch((e) => { setAvailableSlots([]); addToast(e.message, 'error'); })
       .finally(() => setLoadingAvailable(false));
   };
+
+  const SLOT_MINUTES = 45;
+  const WORK_START_HOUR = 9;
+  const WORK_END_HOUR = 17;
 
   const handleCreateSlots = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,21 +134,19 @@ export function AppointmentsPage() {
       const from = new Date(slotFrom);
       const to = new Date(slotTo);
       const slotsPayload: { startAt: string; endAt: string; slotType: string }[] = [];
-      for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-        const start = new Date(d);
-        start.setHours(9, 0, 0, 0);
-        const end = new Date(d);
-        end.setHours(17, 0, 0, 0);
-        for (let h = start.getHours(); h < end.getHours(); h++) {
-          const s = new Date(d);
-          s.setHours(h, 0, 0, 0);
-          const e = new Date(d);
-          e.setHours(h + 1, 0, 0, 0);
+      for (let d = new Date(from.getTime()); d <= to; d.setDate(d.getDate() + 1)) {
+        const dayStart = new Date(d);
+        dayStart.setHours(WORK_START_HOUR, 0, 0, 0);
+        const dayEnd = new Date(d);
+        dayEnd.setHours(WORK_END_HOUR, 0, 0, 0);
+        for (let t = dayStart.getTime(); t < dayEnd.getTime(); t += SLOT_MINUTES * 60 * 1000) {
+          const s = new Date(t);
+          const e = new Date(t + SLOT_MINUTES * 60 * 1000);
           slotsPayload.push({ startAt: s.toISOString(), endAt: e.toISOString(), slotType });
         }
       }
       await api('/availability-slots', { method: 'POST', body: JSON.stringify({ slots: slotsPayload }) });
-      addToast(`Horários criados: ${slotsPayload.length} slots disponíveis.`);
+      addToast(`Horários criados: ${slotsPayload.length} slots de ${SLOT_MINUTES} min.`);
       setSlotFrom('');
       setSlotTo('');
       api<SlotItem[]>('/availability-slots?from=' + from.toISOString() + '&to=' + to.toISOString()).then(setSlots);
@@ -324,7 +329,7 @@ export function AppointmentsPage() {
         <>
           <form onSubmit={handleCreateSlots} className="card" style={{ marginBottom: '1.25rem' }}>
             <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem', fontWeight: 600 }}>Criar horários disponíveis</h2>
-            <p className="form-hint">Blocos de 1 hora, das 9h às 17h, para cada dia no período.</p>
+            <p className="form-hint">Blocos de 45 minutos, das 9h às 17h, para cada dia no período.</p>
             <div className="form-group">
               <label className="label">Data inicial</label>
               <input type="date" className="input" value={slotFrom} onChange={(e) => setSlotFrom(e.target.value)} required />
@@ -383,25 +388,22 @@ export function AppointmentsPage() {
               ))}
             </select>
             <div className="form-group">
-              <label className="label">De (data)</label>
-              <input type="date" className="input" value={bookFrom} onChange={(e) => setBookFrom(e.target.value)} />
+              <label className="label">Data</label>
+              <input type="date" className="input" value={bookDate} onChange={(e) => { setBookDate(e.target.value); setAvailableSlots([]); }} />
             </div>
-            <div className="form-group">
-              <label className="label">Até (data)</label>
-              <input type="date" className="input" value={bookTo} onChange={(e) => setBookTo(e.target.value)} />
-            </div>
+            <p className="form-hint">Horários em blocos de 45 minutos.</p>
             <button type="button" className="btn btn-primary" onClick={loadAvailableSlots} disabled={loadingAvailable}>
-              {loadingAvailable ? 'Buscando...' : 'Buscar horários disponíveis'}
+              {loadingAvailable ? 'Buscando...' : 'Ver horários disponíveis'}
             </button>
           </div>
           {availableSlots.length > 0 && (
             <section aria-label="Horários disponíveis">
-              <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', fontWeight: 600 }}>Escolha um horário</h2>
+              <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', fontWeight: 600 }}>Escolha o horário</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {availableSlots.map((s) => (
                   <div key={s.id} className="card card-clickable" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 0 }}>
                     <span style={{ fontSize: '0.9375rem' }}>
-                      {new Date(s.startAt).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })} às {new Date(s.startAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} · {s.slotType}
+                      {new Date(s.startAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} – {new Date(s.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} · {s.slotType}
                     </span>
                     <button type="button" className="btn btn-primary" style={{ width: 'auto', flexShrink: 0 }} onClick={() => handleBookSlot(s.id)} disabled={saving}>
                       Agendar
@@ -411,11 +413,11 @@ export function AppointmentsPage() {
               </div>
             </section>
           )}
-          {!bookProfessionalId && !loadingAvailable && (
+          {!bookProfessionalId && !loadingAvailable && availableSlots.length === 0 && (
             <EmptyState
               icon="👨‍⚕️"
-              title="Selecione um profissional"
-              description='Escolha o profissional, o período (de e até) e clique em "Buscar horários disponíveis".'
+              title="Selecione profissional e data"
+              description='Escolha o profissional e a data, depois clique em "Ver horários disponíveis" para ver os blocos de 45 min.'
             />
           )}
         </>

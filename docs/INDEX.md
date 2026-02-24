@@ -314,6 +314,7 @@ Novo no projeto? Comece aqui:
 | **Mobile** | [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md) | Padrões Mobile |
 | **Roadmap** | [PLANEJAMENTO_FRONTEND_E_DESIGN_SYSTEM.md](PLANEJAMENTO_FRONTEND_E_DESIGN_SYSTEM.md) | Roteiro |
 | **Plano prioridade alta** | [PLANO_DESENVOLVIMENTO_PRIORIDADE_ALTA.md](PLANO_DESENVOLVIMENTO_PRIORIDADE_ALTA.md) | Agendamento, Prontuário, Notificações |
+| **Análise UX/UI frontend** | [ANALISE_UX_UI_FRONTEND.md](ANALISE_UX_UI_FRONTEND.md) | Pontos fortes, inconsistências, acessibilidade, prioridades |
 | **Padrões de Código** | [STYLE_GUIDE.md](STYLE_GUIDE.md) | Todos |
 | **Histórico** | [CHANGELOG.md](../CHANGELOG.md) | Versões |
 | **Quick Start** | [QUICK_START.md](QUICK_START.md) | Tudo |

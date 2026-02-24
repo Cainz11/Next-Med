@@ -69,13 +69,15 @@ export function ConversationDetailPage() {
               marginBottom: '0.5rem',
               marginLeft: m.senderUserId === userId ? '2rem' : 0,
               marginRight: m.senderUserId !== userId ? '2rem' : 0,
-              background: m.senderUserId === userId ? 'var(--primary)' : 'var(--surface)',
+              background: m.senderUserId === userId ? 'var(--primary)' : 'var(--surface-card)',
               color: m.senderUserId === userId ? '#fff' : 'var(--text)',
+              boxShadow: m.senderUserId !== userId ? '0 1px 3px rgba(15, 118, 110, 0.12)' : undefined,
+              border: m.senderUserId !== userId ? '1px solid rgba(15, 118, 110, 0.15)' : undefined,
             }}
           >
             <p style={{ margin: 0, fontSize: '0.875rem' }}>{m.content}</p>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', opacity: 0.8 }}>
-              {new Date(m.sentAt).toLocaleString('pt-BR')}
+              {new Date(m.sentAt.endsWith('Z') ? m.sentAt : m.sentAt + 'Z').toLocaleString('pt-BR')}
             </p>
           </div>
         ))}

@@ -37,8 +37,19 @@ public class ClinicalNotesController : ControllerBase
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var useCase = HttpContext.RequestServices.GetRequiredService<GetClinicalNotesByPatientUseCase>();
-        var list = await useCase.ExecuteAsync(patientId, userId, ct);
-        return Ok(list);
+        try
+        {
+            var list = await useCase.ExecuteAsync(patientId, userId, ct);
+            return Ok(list);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("Perfil profissional"))
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, new { message = ex.Message });
+        }
     }
 
     [HttpGet("{id:guid}")]
