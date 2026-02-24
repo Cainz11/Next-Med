@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authApi } from '../core/api';
 import { useAuth } from '../core/AuthContext';
+import { maskCpf, unmaskCpf, maskPhone, unmaskPhone } from '../utils/masks';
+import { validatePassword } from '../utils/passwordValidation';
 
 type Tab = 'patient' | 'professional';
 
@@ -16,23 +18,48 @@ export function RegisterPage() {
   const [crm, setCrm] = useState('');
   const [specialty, setSpecialty] = useState('');
   const [error, setError] = useState('');
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setPhone(maskPhone(e.target.value));
+  }
+
+  function handleCpfChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setDocumentNumber(maskCpf(e.target.value));
+  }
+
+  function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setPassword(e.target.value);
+    if (passwordErrors.length) setPasswordErrors(validatePassword(e.target.value).errors);
+  }
+
+  function handlePasswordBlur() {
+    if (password) setPasswordErrors(validatePassword(password).errors);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    const pv = validatePassword(password);
+    if (!pv.valid) {
+      setPasswordErrors(pv.errors);
+      return;
+    }
     setLoading(true);
     try {
+      const phoneValue = unmaskPhone(phone);
+      const docValue = unmaskCpf(documentNumber);
       const result = tab === 'patient'
         ? await authApi.registerPatient({
             email,
             password,
             fullName,
             dateOfBirth: dateOfBirth || null,
-            phone: phone || null,
-            documentNumber: documentNumber || null,
+            phone: phoneValue || null,
+            documentNumber: docValue || null,
           })
         : await authApi.registerProfessional({
             email,
@@ -40,7 +67,7 @@ export function RegisterPage() {
             fullName,
             crm: crm || null,
             specialty: specialty || null,
-            phone: phone || null,
+            phone: phoneValue || null,
           });
       login(result);
       navigate('/dashboard', { replace: true });
@@ -84,11 +111,23 @@ export function RegisterPage() {
         </div>
         <div className="form-group">
           <label className="label">Senha</label>
-          <input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          <input
+            type="password"
+            className="input"
+            value={password}
+            onChange={handlePasswordChange}
+            onBlur={handlePasswordBlur}
+            required
+            minLength={6}
+            placeholder="Mín. 6 caracteres, uma letra e um número"
+          />
+          {passwordErrors.length > 0 && (
+            <p className="error-msg">{passwordErrors.join(' ')}</p>
+          )}
         </div>
         <div className="form-group">
           <label className="label">Telefone</label>
-          <input type="tel" className="input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" />
+          <input type="tel" className="input" value={phone} onChange={handlePhoneChange} placeholder="(11) 99999-9999" />
         </div>
         {tab === 'patient' && (
           <>
@@ -98,7 +137,7 @@ export function RegisterPage() {
             </div>
             <div className="form-group">
               <label className="label">CPF (opcional)</label>
-              <input className="input" value={documentNumber} onChange={(e) => setDocumentNumber(e.target.value)} placeholder="000.000.000-00" />
+              <input className="input" value={documentNumber} onChange={handleCpfChange} placeholder="000.000.000-00" maxLength={14} />
             </div>
           </>
         )}

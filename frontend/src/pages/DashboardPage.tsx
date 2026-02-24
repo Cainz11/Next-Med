@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../core/AuthContext';
 
 export function DashboardPage() {
-  const { email, role } = useAuth();
+  const { fullName, email, role } = useAuth();
 
   return (
     <div className="app-page">
-      <h1 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Olá!</h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{email} · {role === 'Patient' ? 'Paciente' : 'Profissional'}</p>
+      <h1 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Olá, {fullName?.trim() ? fullName : email}!</h1>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{role === 'Patient' ? 'Paciente' : 'Profissional'}</p>
 
       {role === 'Patient' && (
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

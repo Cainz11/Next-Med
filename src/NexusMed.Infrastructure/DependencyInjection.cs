@@ -116,6 +116,7 @@ public static class DependencyInjection
         services.AddScoped<ExportMyDataUseCase>();
         services.AddScoped<DeleteMyAccountUseCase>();
         services.AddScoped<RecordConsentUseCase>();
+        services.AddScoped<GetConsentStatusUseCase>();
         services.AddScoped<GetMyProfileUseCase>();
         services.AddScoped<UpdatePatientProfileUseCase>();
         services.AddScoped<UpdateProfessionalProfileUseCase>();

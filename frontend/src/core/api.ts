@@ -62,6 +62,7 @@ export interface AuthResult {
   userId: string;
   email: string;
   role: string;
+  fullName?: string;
 }
 
 export const authApi = {

@@ -5,6 +5,7 @@ interface AuthState {
   userId: string | null;
   email: string | null;
   role: string | null;
+  fullName: string | null;
   isAuthenticated: boolean;
 }
 
@@ -20,10 +21,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const u = localStorage.getItem('userId');
     const e = localStorage.getItem('email');
     const r = localStorage.getItem('role');
+    const n = localStorage.getItem('fullName');
     return {
       userId: u,
       email: e,
       role: r,
+      fullName: n,
       isAuthenticated: !!(t && u),
     };
   });
@@ -34,7 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('userId', r.userId);
     localStorage.setItem('email', r.email);
     localStorage.setItem('role', r.role);
-    setState({ userId: r.userId, email: r.email, role: r.role, isAuthenticated: true });
+    localStorage.setItem('fullName', r.fullName ?? '');
+    setState({ userId: r.userId, email: r.email, role: r.role, fullName: r.fullName ?? null, isAuthenticated: true });
   }, []);
 
   const logout = useCallback(() => {
@@ -43,7 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('userId');
     localStorage.removeItem('email');
     localStorage.removeItem('role');
-    setState({ userId: null, email: null, role: null, isAuthenticated: false });
+    localStorage.removeItem('fullName');
+    setState({ userId: null, email: null, role: null, fullName: null, isAuthenticated: false });
   }, []);
 
   const setAuth = useCallback((r: AuthResult) => login(r), [login]);

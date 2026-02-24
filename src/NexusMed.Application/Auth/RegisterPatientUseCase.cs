@@ -65,7 +65,8 @@ public class RegisterPatientUseCase
             RefreshTokenExpiresAt: refreshExpires,
             UserId: user.Id,
             Email: user.Email,
-            Role: user.Role
+            Role: user.Role,
+            FullName: command.FullName
         );
     }
 }

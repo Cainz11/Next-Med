@@ -5,17 +5,23 @@ namespace NexusMed.Application.Auth;
 public class LoginUseCase
 {
     private readonly IUserRepository _userRepository;
+    private readonly IPatientProfileRepository _patientProfileRepository;
+    private readonly IProfessionalProfileRepository _professionalProfileRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IAuthTokenService _authTokenService;
     private readonly IRefreshTokenStore _refreshTokenStore;
 
     public LoginUseCase(
         IUserRepository userRepository,
+        IPatientProfileRepository patientProfileRepository,
+        IProfessionalProfileRepository professionalProfileRepository,
         IPasswordHasher passwordHasher,
         IAuthTokenService authTokenService,
         IRefreshTokenStore refreshTokenStore)
     {
         _userRepository = userRepository;
+        _patientProfileRepository = patientProfileRepository;
+        _professionalProfileRepository = professionalProfileRepository;
         _passwordHasher = passwordHasher;
         _authTokenService = authTokenService;
         _refreshTokenStore = refreshTokenStore;
@@ -29,6 +35,18 @@ public class LoginUseCase
         if (!_passwordHasher.Verify(command.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("Email ou senha inválidos.");
 
+        var fullName = "";
+        if (user.Role == "Patient")
+        {
+            var profile = await _patientProfileRepository.GetByUserIdAsync(user.Id, ct);
+            fullName = profile?.FullName ?? "";
+        }
+        else if (user.Role == "Professional")
+        {
+            var profile = await _professionalProfileRepository.GetByUserIdAsync(user.Id, ct);
+            fullName = profile?.FullName ?? "";
+        }
+
         var accessToken = _authTokenService.GenerateAccessToken(user.Id, user.Email, user.Role);
         var refreshToken = _authTokenService.GenerateRefreshToken();
         var refreshExpires = DateTime.UtcNow.AddDays(7);
@@ -40,7 +58,8 @@ public class LoginUseCase
             RefreshTokenExpiresAt: refreshExpires,
             UserId: user.Id,
             Email: user.Email,
-            Role: user.Role
+            Role: user.Role,
+            FullName: fullName
         );
     }
 }

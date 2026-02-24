@@ -89,7 +89,7 @@ public record RegisterPatientRequest(string Email, string Password, string FullN
 public record RegisterProfessionalRequest(string Email, string Password, string FullName, string? Crm, string? Specialty, string? Phone);
 public record LoginRequest(string Email, string Password);
 public record RefreshRequest(string RefreshToken);
-public record AuthResponse(string AccessToken, string RefreshToken, DateTime RefreshTokenExpiresAt, Guid UserId, string Email, string Role)
+public record AuthResponse(string AccessToken, string RefreshToken, DateTime RefreshTokenExpiresAt, Guid UserId, string Email, string Role, string FullName)
 {
-    public AuthResponse(AuthResult r) : this(r.AccessToken, r.RefreshToken, r.RefreshTokenExpiresAt, r.UserId, r.Email, r.Role) { }
+    public AuthResponse(AuthResult r) : this(r.AccessToken, r.RefreshToken, r.RefreshTokenExpiresAt, r.UserId, r.Email, r.Role, r.FullName) { }
 }

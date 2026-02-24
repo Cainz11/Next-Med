@@ -6,5 +6,6 @@ public record AuthResult(
     DateTime RefreshTokenExpiresAt,
     Guid UserId,
     string Email,
-    string Role
+    string Role,
+    string FullName
 );

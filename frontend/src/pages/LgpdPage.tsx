@@ -1,15 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../core/api';
 import { useAuth } from '../core/AuthContext';
+
+const DEFAULT_CONSENT_PURPOSE = 'Uso de dados de saúde no app Nexus Med';
+
+interface ConsentStatus {
+  accepted: boolean | null;
+  recordedAt: string | null;
+}
 
 export function LgpdPage() {
   const { logout } = useAuth();
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [consentPurpose, setConsentPurpose] = useState('Uso de dados de saúde no app Nexus Med');
+  const [consentPurpose, setConsentPurpose] = useState(DEFAULT_CONSENT_PURPOSE);
+  const [consentStatus, setConsentStatus] = useState<ConsentStatus | null>(null);
+  const [loadingConsentStatus, setLoadingConsentStatus] = useState(true);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    api<ConsentStatus>(`/lgpd/consent-status?purpose=${encodeURIComponent(DEFAULT_CONSENT_PURPOSE)}`)
+      .then(setConsentStatus)
+      .catch(() => setConsentStatus({ accepted: null, recordedAt: null }))
+      .finally(() => setLoadingConsentStatus(false));
+  }, []);
 
   async function handleExport() {
     setError('');
@@ -39,6 +55,7 @@ export function LgpdPage() {
         body: JSON.stringify({ purpose: consentPurpose, accepted }),
       });
       setMessage(accepted ? 'Consentimento registrado.' : 'Registro de não consentimento salvo.');
+      setConsentStatus({ accepted, recordedAt: new Date().toISOString() });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao registrar');
     }
@@ -79,17 +96,30 @@ export function LgpdPage() {
 
       <div className="card">
         <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Consentimento</h2>
-        <p style={{ fontSize: '0.875rem', marginBottom: '0.75rem', color: 'var(--text-muted)' }}>
-          Registre seu consentimento para tratamento de dados.
-        </p>
-        <div className="form-group">
-          <label className="label">Finalidade</label>
-          <input className="input" value={consentPurpose} onChange={(e) => setConsentPurpose(e.target.value)} />
-        </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button type="button" className="btn btn-primary" onClick={() => handleConsent(true)}>Aceitar</button>
-          <button type="button" className="btn btn-secondary" onClick={() => handleConsent(false)}>Recusar</button>
-        </div>
+        {loadingConsentStatus ? (
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Carregando...</p>
+        ) : consentStatus?.accepted === true ? (
+          <p style={{ fontSize: '0.875rem', color: 'var(--success)' }}>
+            Você já registrou seu consentimento para esta finalidade
+            {consentStatus.recordedAt
+              ? ` em ${new Date(consentStatus.recordedAt).toLocaleDateString('pt-BR')}.`
+              : '.'}
+          </p>
+        ) : (
+          <>
+            <p style={{ fontSize: '0.875rem', marginBottom: '0.75rem', color: 'var(--text-muted)' }}>
+              Registre seu consentimento para tratamento de dados.
+            </p>
+            <div className="form-group">
+              <label className="label">Finalidade</label>
+              <input className="input" value={consentPurpose} onChange={(e) => setConsentPurpose(e.target.value)} />
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button type="button" className="btn btn-primary" onClick={() => handleConsent(true)}>Aceitar</button>
+              <button type="button" className="btn btn-secondary" onClick={() => handleConsent(false)}>Recusar</button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="card">
