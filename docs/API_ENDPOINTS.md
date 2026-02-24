@@ -93,6 +93,49 @@ Autenticação: Bearer JWT no header `Authorization` (exceto onde indicado *Púb
 
 ---
 
+## Availability Slots (`/api/availability-slots`)
+
+| Método | Rota | Auth | Descrição | Body / Query | Resposta |
+|--------|------|------|-----------|--------------|----------|
+| POST | `/availability-slots` | JWT (Professional) | Criar slots de disponibilidade | `slots`: `[{ startAt, endAt, slotType? }]` | 200 + `ids` |
+| GET | `/availability-slots` | JWT (Professional) | Meus slots | `from`, `to` (DateTime) | 200 + array |
+| DELETE | `/availability-slots/{id}` | JWT (Professional) | Excluir slot (sem consulta ativa) | — | 204 |
+
+---
+
+## Appointments (`/api/appointments`)
+
+| Método | Rota | Auth | Descrição | Body / Query | Resposta |
+|--------|------|------|-----------|--------------|----------|
+| GET | `/appointments/available-slots` | JWT | Slots disponíveis do profissional | `professionalId`, `from`, `to` | 200 + array |
+| GET | `/appointments` | JWT | Minhas consultas (paciente ou profissional) | `from?`, `to?`, `status?` | 200 + array |
+| POST | `/appointments` | JWT (Patient) | Agendar consulta | `professionalId`, `slotId?`, `scheduledAt?`, `durationMinutes?`, `appointmentType?`, `notes?` | 201 + `id` |
+| POST | `/appointments/{id}/cancel` | JWT | Cancelar consulta | `reason?` | 204 |
+
+---
+
+## Clinical Notes (`/api/clinical-notes`)
+
+| Método | Rota | Auth | Descrição | Body / Query | Resposta |
+|--------|------|------|-----------|--------------|----------|
+| POST | `/clinical-notes` | JWT (Professional) | Criar evolução | `patientId`, `appointmentId?`, `content?`, `noteType?` | 201 + `id` |
+| PUT | `/clinical-notes/{id}` | JWT (Professional) | Atualizar evolução (apenas autor) | `content` | 204 |
+| GET | `/clinical-notes` | JWT (Professional) | Listar por paciente | `patientId` | 200 + array |
+| GET | `/clinical-notes/{id}` | JWT | Obter uma evolução | — | 200 / 404 |
+
+---
+
+## Notifications (`/api/notifications`)
+
+| Método | Rota | Auth | Descrição | Query | Resposta |
+|--------|------|------|-----------|------|----------|
+| GET | `/notifications` | JWT | Minhas notificações | `unreadOnly?`, `skip?`, `take?` | 200 + `{ items, unreadCount }` |
+| GET | `/notifications/unread-count` | JWT | Contagem de não lidas | — | 200 + `{ unreadCount }` |
+| POST | `/notifications/{id}/read` | JWT | Marcar como lida | — | 204 |
+| POST | `/notifications/mark-all-read` | JWT | Marcar todas como lidas | — | 204 |
+
+---
+
 ## Resumo por prefixo
 
 - **auth** — login, registro, refresh (todos públicos).
@@ -103,6 +146,10 @@ Autenticação: Bearer JWT no header `Authorization` (exceto onde indicado *Púb
 - **messages** — conversations (GET/POST), messages (GET), send (POST).
 - **professionals** — GET lista.
 - **ratings** — POST criar, GET professional/:userId (público).
+- **availability-slots** — POST criar, GET meus, DELETE (Professional).
+- **appointments** — GET available-slots, GET minhas, POST agendar (Patient), POST cancel.
+- **clinical-notes** — POST/PUT/GET por paciente, GET por id (Professional para criar/editar).
+- **notifications** — GET lista e unread-count, POST read e mark-all-read.
 - **lgpd** — consent (POST), export-my-data (GET), my-account (DELETE).
 
 As rotas são **case-insensitive** (ex.: `/api/profile` e `/api/Profile` funcionam). O frontend usa sempre minúsculas (ex.: `/api/profile`, `/api/health-metrics`). O ASP.NET Core aceita ambos; o proxy e o `ApiService` usam `/api/...` em minúsculas.

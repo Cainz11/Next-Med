@@ -171,6 +171,23 @@ Novo no projeto? Comece aqui:
 
 ---
 
+#### 📋 [PLANO_DESENVOLVIMENTO_PRIORIDADE_ALTA.md](PLANO_DESENVOLVIMENTO_PRIORIDADE_ALTA.md)
+**O que você encontra:**
+- 🗓️ **Fase 1 – Agendamento**: slots de disponibilidade, consultas, cancelamento (modelo de dados, use cases, endpoints, frontend)
+- 📋 **Fase 2 – Prontuário/Evolução**: evolução clínica vinculada a paciente/consulta (entidades, permissões, API)
+- 🔔 **Fase 3 – Notificações**: notificações in-app (agendamento, lembrete, marcar como lida), preparação para e-mail/push
+- Resumo de artefatos por fase (Domain, Application, Infrastructure, WebApi, Frontend)
+- Critérios de conclusão e checklist geral de entrega
+
+**Para quem:**
+- Tech leads e arquitetos
+- Product owners e planejamento de sprints
+- Desenvolvedores que vão implementar as fases
+
+**Tempo de leitura:** ~20 minutos
+
+---
+
 ### 6️⃣ Padrões e Convenções
 
 #### 📐 [STYLE_GUIDE.md](STYLE_GUIDE.md)
@@ -296,6 +313,7 @@ Novo no projeto? Comece aqui:
 | **Acessibilidade** | [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) | Acessibilidade |
 | **Mobile** | [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md) | Padrões Mobile |
 | **Roadmap** | [PLANEJAMENTO_FRONTEND_E_DESIGN_SYSTEM.md](PLANEJAMENTO_FRONTEND_E_DESIGN_SYSTEM.md) | Roteiro |
+| **Plano prioridade alta** | [PLANO_DESENVOLVIMENTO_PRIORIDADE_ALTA.md](PLANO_DESENVOLVIMENTO_PRIORIDADE_ALTA.md) | Agendamento, Prontuário, Notificações |
 | **Padrões de Código** | [STYLE_GUIDE.md](STYLE_GUIDE.md) | Todos |
 | **Histórico** | [CHANGELOG.md](../CHANGELOG.md) | Versões |
 | **Quick Start** | [QUICK_START.md](QUICK_START.md) | Tudo |
