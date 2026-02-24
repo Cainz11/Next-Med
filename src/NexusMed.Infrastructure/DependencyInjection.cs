@@ -28,10 +28,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var rawConnection = configuration.GetConnectionString("DefaultConnection");
+        // Railway/Render costumam expor DATABASE_URL; ASP.NET usa ConnectionStrings:DefaultConnection
+        var rawConnection = configuration.GetConnectionString("DefaultConnection")
+            ?? configuration["DATABASE_URL"];
         var connectionString = string.IsNullOrWhiteSpace(rawConnection)
             ? "Data Source=nexusmed.db"
-            : rawConnection;
+            : rawConnection.Trim();
         var providerConfig = configuration["DatabaseProvider"];
         var provider = string.IsNullOrWhiteSpace(providerConfig)
             ? InferProvider(connectionString)
@@ -143,11 +145,14 @@ public static class DependencyInjection
     {
         if (string.IsNullOrWhiteSpace(connectionString)) return "Sqlite";
         var cs = connectionString.Trim();
-        if (cs.EndsWith(".db", StringComparison.OrdinalIgnoreCase) || cs.Contains("Data Source=") && cs.Contains(".db"))
+        // Railway/Render enviam URL postgresql:// — detectar para usar Npgsql (banco persistente)
+        if (cs.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) || cs.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+            return "Npgsql";
+        if (cs.EndsWith(".db", StringComparison.OrdinalIgnoreCase) || (cs.Contains("Data Source=", StringComparison.OrdinalIgnoreCase) && cs.Contains(".db")))
             return "Sqlite";
         if (cs.Contains("Initial Catalog=", StringComparison.OrdinalIgnoreCase) || cs.Contains("Server=", StringComparison.OrdinalIgnoreCase))
             return "SqlServer";
-        if (cs.Contains("Host=", StringComparison.OrdinalIgnoreCase) || cs.Contains("Database=") && cs.Contains("Port="))
+        if (cs.Contains("Host=", StringComparison.OrdinalIgnoreCase) || (cs.Contains("Database=", StringComparison.OrdinalIgnoreCase) && cs.Contains("Port=", StringComparison.OrdinalIgnoreCase)))
             return "Npgsql";
         return "Sqlite";
     }

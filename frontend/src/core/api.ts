@@ -28,6 +28,11 @@ export async function api<T>(
   };
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   if (res.status === 401) {
+    const isLoginOrRefresh = path === '/auth/login' || path === '/auth/refresh';
+    if (isLoginOrRefresh) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error((err as { message?: string }).message || 'Email ou senha inválidos.');
+    }
     const refresh = localStorage.getItem('refreshToken');
     if (refresh) {
       const refreshed = await fetch(`${API_BASE}/auth/refresh`, {
@@ -44,7 +49,9 @@ export async function api<T>(
     }
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    window.location.href = '/login';
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
     throw new Error('Sessão expirada');
   }
   if (!res.ok) {

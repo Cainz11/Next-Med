@@ -6,13 +6,13 @@
   --primary-light: #14b8a6;
   --primary-muted: rgba(15, 118, 110, 0.12);
 
-  --surface: #f0fdfa;
-  --surface-card: #fff;
-  --surface-elevated: #fff;
+  --surface: #e0f2f1;
+  --surface-card: #ffffff;
+  --surface-elevated: #ffffff;
 
-  --text: #134e4a;
-  --text-muted: #5a7c79;
-  --text-disabled: #9ca3af;
+  --text: #0d3d38;
+  --text-muted: #4a6b67;
+  --text-disabled: #8b9a98;
 
   --border: #99f6e4;
   --border-strong: #5eead4;

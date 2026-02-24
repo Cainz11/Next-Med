@@ -28,13 +28,12 @@ O endereço que você citou (`shuttle.proxy.rlwy.net:33548`) é só **host:porta
 
 No **serviço da API** (não no do banco):
 
-1. **Variables** → adicione ou edite:
-   - **Nome:** `ConnectionStrings__DefaultConnection`
-   - **Valor:** cole o valor completo de **`DATABASE_URL`** (a URL acima).
-2. **Nome:** `DatabaseProvider`  
-   **Valor:** `Npgsql`
+1. **Variables** → adicione ou edite **uma** das opções:
+   - **Opção A:** `ConnectionStrings__DefaultConnection` = valor completo da **DATABASE_URL** (URL `postgresql://...`).
+   - **Opção B:** `DATABASE_URL` = valor completo (ou referência à variável do serviço PostgreSQL). A API lê `DATABASE_URL` automaticamente se `DefaultConnection` não estiver definida.
+2. **Opcional:** `DatabaseProvider` = `Npgsql` (a API detecta PostgreSQL pela URL `postgresql://` e usa Npgsql; definir só evita ambiguidade).
 
-Se o Railway permitir **referência** à variável do outro serviço, você pode apontar `ConnectionStrings__DefaultConnection` para a `DATABASE_URL` do PostgreSQL em vez de colar o valor.
+**Importante:** Se a API não receber nenhuma connection string, ela usa **SQLite** com arquivo local. No Railway o sistema de arquivos é efêmero: a cada deploy o “banco” é recriado vazio e os dados são perdidos. Por isso é essencial configurar **DATABASE_URL** ou **ConnectionStrings__DefaultConnection** com a URL do PostgreSQL.
 
 Depois disso, faça um **Redeploy** do serviço da API. Na primeira subida, o `Migrate()` vai criar todas as tabelas no banco em `shuttle.proxy.rlwy.net:33548`.
 

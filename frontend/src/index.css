@@ -1,20 +1,37 @@
+/* ========== Design system — hierarquia de cores ==========
+   • Fundo da página (--surface): tom de fundo, distinto das caixas
+   • Caixa / card (--surface-card): conteúdo em destaque; borda/sombra para separar do fundo
+   • Texto principal (--text): alto contraste sobre fundo e caixa
+   • Texto secundário (--text-muted): labels, datas, descrições
+   ========================================================== */
 :root {
   --primary: #0f766e;
   --primary-light: #14b8a6;
-  --surface: #f0fdfa;
-  --surface-card: #fff;
-  --text: #134e4a;
-  --text-muted: #5a7a77;
-  --border: #99f6e4;
+
+  /* Superfícies: fundo da página vs caixa (box/card) */
+  --surface: #e0f2f1;
+  --surface-card: #ffffff;
+  --surface-elevated: #ffffff;
+
+  /* Texto: fonte principal e secundária */
+  --text: #0d3d38;
+  --text-muted: #4a6b67;
+
+  /* Bordas: destacam caixas do fundo */
+  --border: #b2dfdb;
+  --border-strong: #80cbc4;
+
   --error: #b91c1c;
   --success: #0d9488;
   --success-bg: #ccfbf1;
   --warning: #d97706;
   --warning-bg: #fef3c7;
+
   --max-width: 420px;
   --radius: 0.75rem;
   --radius-sm: 0.5rem;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 1px 3px rgba(15, 118, 110, 0.08);
+  --shadow-card: 0 2px 8px rgba(15, 118, 110, 0.1);
   --transition: 0.2s ease;
 }
 
@@ -96,7 +113,8 @@ button {
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
-  background: var(--surface);
+  background: var(--surface-card);
+  color: var(--text);
   margin-bottom: 0.75rem;
 }
 .input:focus {
@@ -117,10 +135,11 @@ button {
 
 .card {
   background: var(--surface-card);
-  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .error-msg {

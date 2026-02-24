@@ -61,11 +61,17 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<NexusMed.Infrastructure.Persistence.AppDbContext>();
-    // Migrations atuais foram geradas para SQL Server; SQLite não entende uniqueidentifier/nvarchar(max). Para SQLite usa EnsureCreated.
+    var logger = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>().CreateLogger("Startup");
     if (db.Database.IsSqlite())
+    {
+        logger.LogWarning("Usando SQLite (banco local). Em produção (Railway/Render), defina DATABASE_URL ou ConnectionStrings__DefaultConnection com URL PostgreSQL para persistência.");
         db.Database.EnsureCreated();
+    }
     else
+    {
+        logger.LogInformation("Aplicando migrations no banco de dados (PostgreSQL).");
         db.Database.Migrate();
+    }
 }
 
 app.Run();
